@@ -1,0 +1,59 @@
+[
+    {
+        "id": 1,
+        "question": "Question1",
+        "options": [
+            {
+                "id": 1,
+                "answer": "Clasa a = new Clasa()"
+            },
+            {
+                "id": 2,
+                "answer": "Clasa a = Clasa(a)"
+            },
+            {
+                "id": 3,
+                "answer": "a = new Clasa()"
+            }
+        ],
+        "rightAnswerId": 1
+    },
+    {
+        "id": 2,
+        "question": "Question2",
+        "options": [
+            {
+                "id": 4,
+                "answer": "Clasa a = new Clasa()"
+            },
+            {
+                "id": 5,
+                "answer": "Clasa a = Clasa(a)"
+            },
+            {
+                "id": 6,
+                "answer": "a = new Clasa()"
+            }
+        ],
+        "rightAnswerId": 6
+    },
+    {
+        "id": 3,
+        "question": "Question3",
+        "options": [
+            {
+                "id": 7,
+                "answer": "Clasa a = new Clasa()"
+            },
+            {
+                "id": 5,
+                "answer": "Clasa a = Clasa(a)"
+            },
+            {
+                "id": 6,
+                "answer": "a = new Clasa()"
+            }
+        ],
+        "rightAnswerId": 6
+    }
+]
