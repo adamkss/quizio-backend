@@ -24,15 +24,12 @@ export class QuizService {
         const sessionData = this.sessionsQuestionsMap[sessionCode];
         if (sessionData.nextQuestionIndex == sessionData.questions.length) {
             console.log('all finished taking if any left...')
-            console.log(sessionData.wronglyAnsweredQuestionsIndexes)
-            console.log(sessionData.wronglyAnsweredQuestionsIndexes.length)
             if (sessionData.wronglyAnsweredQuestionsIndexes.length > 0) {
                 const questionIndex = sessionData.wronglyAnsweredQuestionsIndexes[0];
                 sessionData.wronglyAnsweredQuestionsIndexes.splice(
                     sessionData.wronglyAnsweredQuestionsIndexes.indexOf(questionIndex),
                     1
                 );
-                console.log(questionIndex)
                 return {
                     question: sessionData.questions[questionIndex],
                     done: false
