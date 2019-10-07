@@ -66,6 +66,20 @@ export class CoursesService {
         }
     }
 
+    async addOptionToQuestion(questionId: number, option: string): Promise<any[]> {
+        const question = await this.questionRepository.findOne(questionId);
+
+        let questionOption = new QuestionOption();
+        questionOption.question = question;
+        questionOption.title = option;
+        questionOption.amITheRightAnswer = false;
+        await this.questionOptionsRepository.save(questionOption);
+
+        question.questionOptions = [...question.questionOptions, questionOption];
+
+        return question.questionOptions.map(questionOption => ({...questionOption, question: null}));
+    }
+
     async getAllQuizesOfCourse(courseId) {
         const course = await this.getCourseById(courseId);
         const quizes = await course.quizes;

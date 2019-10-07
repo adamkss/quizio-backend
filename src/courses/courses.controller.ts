@@ -44,6 +44,12 @@ export class CoursesController {
     async getAllQuestionsOfQuiz(@Param('quizId') quizId) {
         return await this.coursesService.getAllQuestionsOfAQuiz(quizId);
     }
+
+    @Post('/questions/:questionId/questionOptions')
+    async addOptionToQuestion(@Param("questionId") questionId, @Body() {questionOption}) {
+        return await this.coursesService.addOptionToQuestion(questionId, questionOption);
+    }
+
 }
 
 interface NewCourseData {
