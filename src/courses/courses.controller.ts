@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 
 @Controller('courses')
@@ -50,6 +50,10 @@ export class CoursesController {
         return await this.coursesService.addOptionToQuestion(questionId, questionOption);
     }
 
+    @Put('/questions/:questionId/rightAnswer')
+    async updateRightAnswerToQuestion(@Param("questionId") questionId, @Body() {newCorrectQuestionOptionId}) {
+        return await this.coursesService.setNewRightAnswerToQuestion(questionId, newCorrectQuestionOptionId);
+    }
 }
 
 interface NewCourseData {

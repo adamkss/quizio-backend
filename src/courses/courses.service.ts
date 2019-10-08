@@ -47,7 +47,7 @@ export class CoursesService {
 
     async createQuestion(quizId: number, questionTitle: string, options: string[], rightAnswer: string) {
         const quizToAssignQuestionTo = await this.getQuizById(quizId);
-        
+
         let question = new Question();
         question.question = questionTitle;
         question.quiz = quizToAssignQuestionTo;
@@ -57,7 +57,7 @@ export class CoursesService {
             const questionOption = new QuestionOption();
             questionOption.title = option;
             questionOption.question = question;
-            if(option == rightAnswer) {
+            if (option == rightAnswer) {
                 questionOption.amITheRightAnswer = true;
             } else {
                 questionOption.amITheRightAnswer = false;
@@ -77,7 +77,7 @@ export class CoursesService {
 
         question.questionOptions = [...question.questionOptions, questionOption];
 
-        return question.questionOptions.map(questionOption => ({...questionOption, question: null}));
+        return question.questionOptions.map(questionOption => ({ ...questionOption, question: null }));
     }
 
     async getAllQuizesOfCourse(courseId) {
@@ -90,5 +90,20 @@ export class CoursesService {
         const quiz = await this.getQuizById(quizId);
         const questions = await quiz.questions;
         return await Promise.all(questions.map((question) => this.questionRepository.findOne(question.id)));
+    }
+
+    async setNewRightAnswerToQuestion(questionId, questionOptionId) {
+        const question: Question = await this.questionRepository.findOne(questionId);
+
+        //first we set all question options to false
+        await Promise.all(question.questionOptions.map(questionOption => {
+            if (questionOption.id === questionOptionId)
+                questionOption.amITheRightAnswer = true;
+            else
+                questionOption.amITheRightAnswer = false;
+            return this.questionOptionsRepository.save(questionOption);
+        }));
+
+        return question.questionOptions.map(questionOption => ({ ...questionOption, question: null }));
     }
 }
