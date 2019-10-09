@@ -6,6 +6,13 @@ import { Quiz } from './quiz.entity';
 import { Question } from './question.entity';
 import { QuestionOption } from './questionOption.entity';
 
+const getQuestionOptionsWithoutParentQuestion = (questionOptions: QuestionOption[]): QuestionOption[] => {
+    return questionOptions.map(questionOption => ({
+        ...questionOption,
+        question: null
+    }));
+}
+
 @Injectable()
 export class CoursesService {
     constructor(
@@ -105,5 +112,17 @@ export class CoursesService {
         }));
 
         return question.questionOptions.map(questionOption => ({ ...questionOption, question: null }));
+    }
+
+    async deleteAnswerFromQuestion(questionId, questionOptionId): Promise<QuestionOption[]> {
+        await this.questionOptionsRepository.delete(questionOptionId);
+        const question: Question =  await this.questionRepository.findOne(questionId);
+        return getQuestionOptionsWithoutParentQuestion(question.questionOptions);
+    }
+
+    async deleteQuestion(questionId) {
+        const question: Question = await this.questionRepository.findOne(questionId);
+        await this.questionOptionsRepository.remove(question.questionOptions);
+        await this.questionRepository.delete(questionId);
     }
 }

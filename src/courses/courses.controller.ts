@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, HttpCode } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 
 @Controller('courses')
@@ -53,6 +53,17 @@ export class CoursesController {
     @Put('/questions/:questionId/rightAnswer')
     async updateRightAnswerToQuestion(@Param("questionId") questionId, @Body() {newCorrectQuestionOptionId}) {
         return await this.coursesService.setNewRightAnswerToQuestion(questionId, newCorrectQuestionOptionId);
+    }
+
+    @Delete('/questions/:questionId/questionOptions/:questionOptionId')
+    async deleteQuestionOptionFromQuestion(@Param("questionId") questionId, @Param("questionOptionId") questionOptionId) {
+        return await this.coursesService.deleteAnswerFromQuestion(questionId, questionOptionId);
+    }
+
+    @Delete('/questions/:questionId')
+    @HttpCode(204)
+    async deleteQuestion (@Param('questionId') questionId) {
+        await this.coursesService.deleteQuestion(questionId);
     }
 }
 
