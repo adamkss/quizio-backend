@@ -21,13 +21,20 @@ export class AppController {
     return await this.userService.insertUser(user.name);
   }
 
-  @Get('/quiz/:quizId/nextQuestion')
-  getNextQuestionForQuiz(@Param('quizId') quizId) {
-    return this.quizService.getNextQuestionForSession(quizId);
+  @Get('/quizzes/quizSessions/:sessionId')
+  getNextQuestionForQuiz(@Param('sessionId') sessionId) {
+    return this.quizService.getNextQuestionForSession(sessionId);
   }
 
   @Post('/quiz/:quizId/addClientAnswer')
   verifyAnswer(@Param('quizId') quizId, @Body() body: any) {
     return this.quizService.validateAnswerForQuestion(quizId, body.questionId, body.answerId);
+  }
+
+  @Post('/quizzes/:quizId/quizSessions/')
+  async createSessionForQuiz(@Param('quizId') quizId) {
+    return {
+      sessionId: await this.quizService.createNewSessionForQuiz(quizId)
+    }
   }
 }

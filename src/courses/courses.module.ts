@@ -10,6 +10,7 @@ import { QuestionOption } from './questionOption.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Course, Quiz, Question, QuestionOption])],
   controllers: [CoursesController],
-  providers: [CoursesService]
+  providers: [CoursesService],
+  exports: [CoursesService]
 })
 export class CoursesModule {}
