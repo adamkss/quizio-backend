@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, HttpCode, Res } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 
 @Controller('courses')
@@ -23,8 +23,8 @@ export class CoursesController {
         return await this.coursesService.getAllQuizesOfCourse(courseId);
     }
 
-    @Post('/quizes')
-    async createQuiz(@Body() {courseId, quizName}: NewQuizData) {
+    @Post('/:courseId/quizzes')
+    async createQuiz(@Param('courseId') courseId, @Body() {quizName}: NewQuizData) {
         const newQuiz = await this.coursesService.createQuiz(courseId, quizName);
         return newQuiz;
     }
@@ -64,6 +64,12 @@ export class CoursesController {
     @HttpCode(204)
     async deleteQuestion (@Param('questionId') questionId) {
         await this.coursesService.deleteQuestion(questionId);
+    }
+
+    @Delete('/:courseId/quizzes/:quizId')
+    async deleteQuiz(@Param('courseId') courseId, @Param('quizId') quizId, @Res() response) {
+        const wasDeletedSuccessfully = await this.coursesService.deleteQuiz(courseId, quizId);
+        wasDeletedSuccessfully ? response.status(204).end() : response.status(404).end();
     }
 }
 

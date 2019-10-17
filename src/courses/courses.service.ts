@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, DeleteResult } from 'typeorm';
 import { Course } from './course.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Quiz } from './quiz.entity';
@@ -43,7 +43,7 @@ export class CoursesService {
 
     async createQuiz(courseId, quizName): Promise<Quiz> {
         const course = await this.getCourseById(courseId);
-        console.log(course);
+        console.log(courseId, course);
 
         const quiz = new Quiz();
         quiz.name = quizName;
@@ -116,7 +116,7 @@ export class CoursesService {
 
     async deleteAnswerFromQuestion(questionId, questionOptionId): Promise<QuestionOption[]> {
         await this.questionOptionsRepository.delete(questionOptionId);
-        const question: Question =  await this.questionRepository.findOne(questionId);
+        const question: Question = await this.questionRepository.findOne(questionId);
         return getQuestionOptionsWithoutParentQuestion(question.questionOptions);
     }
 
@@ -124,5 +124,14 @@ export class CoursesService {
         const question: Question = await this.questionRepository.findOne(questionId);
         await this.questionOptionsRepository.remove(question.questionOptions);
         await this.questionRepository.delete(questionId);
+    }
+
+    async deleteQuiz(courseId, quizId) {
+        const quiz:Quiz = await this.quizRepository.findOne(quizId);
+        const questions:Question[] = await quiz.questions;
+        await Promise.all(questions.map(question => question.id).map(questionId => this.deleteQuestion(questionId)));
+
+        const res: DeleteResult = await this.quizRepository.delete(quizId);
+        return res.affected === 1;
     }
 }
