@@ -1,10 +1,10 @@
 {
     "type": "mysql",
-    "host": "localhost",
+    "host": "conquerio.cozwwqkki5d8.us-east-2.rds.amazonaws.com",
     "port": 3306,
-    "username": "root",
-    "password": "root",
+    "username": "admin",
+    "password": "baurer9x8ee",
     "database": "conquerio",
-    "entities": ["src/**/*.entity{.ts,.js}"],
+    "entities": ["dist/**/*.entity{.ts,.js}"],
     "synchronize": true
   }

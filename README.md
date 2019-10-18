@@ -60,16 +60,11 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Dependencies
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Run a mySQL database instance, for ex. in Docker:
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-  Nest is [MIT licensed](LICENSE).
+```
+docker run -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=conquerio -p 3306:3306 -d mysql:5
+```
+If anything is different on your machine, change the ```ormconfig.json```.

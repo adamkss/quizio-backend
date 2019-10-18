@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { QuizService } from "./Quiz.service";
-import { CoursesModule } from "src/courses/courses.module";
+import { CoursesModule } from "../courses/courses.module";
 
 @Module({
     imports: [CoursesModule],
