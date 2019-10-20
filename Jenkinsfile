@@ -11,7 +11,7 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app = docker.build("conquerio")
+        app = docker.build("kissadam/conquerio")
     }
 
     stage('Test image') {
