@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { CoursesService } from "../courses/courses.service";
-import { Question } from '../courses/question.entity';
+import { Question } from '../questions/question.entity';
+import { QuizzesService } from "src/quizzes/quizzes.service";
 
 @Injectable()
-export class QuizService {
+export class QuizSessionService {
     sessionsQuestionsMap = {};
 
-    constructor(private readonly coursesService: CoursesService) { }
+    constructor(
+        private readonly quizzesService: QuizzesService
+    ) { }
 
     private initializeQuestionsForSession(sessionCode: string, questions: Question[]) {
         const sessionData = {
@@ -25,7 +27,7 @@ export class QuizService {
     getNextQuestionForSession(sessionCode) {
         const sessionData = this.sessionsQuestionsMap[sessionCode];
         console.log(sessionData)
-        
+
         if (sessionData.nextQuestionIndex == sessionData.questions.length) {
             sessionData.wereAllAnsweredAtLeastOnce = true;
         }
@@ -42,7 +44,7 @@ export class QuizService {
             console.log('all finished taking if any left...')
             if (sessionData.wronglyAnsweredQuestionsIndexes.length > 0) {
                 const questionIndex = sessionData.wronglyAnsweredQuestionsIndexes[0];
-                
+
                 sessionData.waitingAnswerForQuestion = sessionData.questions[questionIndex];
                 return {
                     question: sessionData.questions[questionIndex],
@@ -74,7 +76,7 @@ export class QuizService {
         if (question) {
             if (sessionData.waitingAnswerForQuestion.id === questionId) {
                 sessionData.waitingAnswerForQuestion = null;
-                if(sessionData.wereAllAnsweredAtLeastOnce) {
+                if (sessionData.wereAllAnsweredAtLeastOnce) {
                     sessionData.wronglyAnsweredQuestionsIndexes.splice(
                         0,
                         1
@@ -107,7 +109,7 @@ export class QuizService {
             nextSessionId = Math.ceil(Math.random() * 1000);
         } while (this.sessionsQuestionsMap[nextSessionId]);
 
-        this.initializeQuestionsForSession(nextSessionId, await this.coursesService.getAllQuestionsOfAQuiz(quizId));
+        this.initializeQuestionsForSession(nextSessionId, await this.quizzesService.getAllQuestionsOfAQuiz(quizId));
 
         return nextSessionId;
     }
