@@ -3,14 +3,17 @@ import { CoursesController } from './courses.controller';
 import { CoursesService } from './courses.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './course.entity';
-import { Quiz } from './quiz.entity';
-import { Question } from './question.entity';
-import { QuestionOption } from './questionOption.entity';
+import { Question } from '../questions/question.entity';
+import { QuestionOption } from '../question-options/questionOption.entity';
+import { QuizzesModule } from 'src/quizzes/quizzes.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Course, Quiz, Question, QuestionOption])],
+  imports: [
+    TypeOrmModule.forFeature([Course]),
+    QuizzesModule
+  ],
   controllers: [CoursesController],
   providers: [CoursesService],
   exports: [CoursesService]
 })
-export class CoursesModule {}
+export class CoursesModule { }
