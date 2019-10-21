@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Question } from 'src/questions/question.entity';
+import { Question } from './question.entity';
 import { Repository } from 'typeorm';
-import { Quiz } from 'src/quizzes/quiz.entity';
-import { QuestionOptionsService } from 'src/question-options/question-options.service';
-import { QuestionOption } from 'src/question-options/questionOption.entity';
+import { Quiz } from '../quizzes/quiz.entity';
+import { QuestionOptionsService } from '../question-options/question-options.service';
+import { QuestionOption } from '../question-options/questionOption.entity';
 
 @Injectable()
 export class QuestionsService {

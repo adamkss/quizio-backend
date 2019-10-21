@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Param, Put, Delete, HttpCode, Res } from '@nestjs/common';
 import { CoursesService } from './courses.service';
-import { Quiz } from 'src/quizzes/quiz.entity';
+import { Quiz } from '../quizzes/quiz.entity';
 
 @Controller('courses')
 export class CoursesController {

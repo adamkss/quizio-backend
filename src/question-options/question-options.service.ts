@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuestionOption } from './questionOption.entity';
 import { Repository } from 'typeorm';
-import { Question } from 'src/questions/question.entity';
+import { Question } from '../questions/question.entity';
 
 const getQuestionOptionsWithoutParentQuestion = (questionOptions: QuestionOption[]): QuestionOption[] => {
     return questionOptions.map(questionOption => ({

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Question } from '../questions/question.entity';
-import { QuizzesService } from "src/quizzes/quizzes.service";
+import { QuizzesService } from "../quizzes/quizzes.service";
 
 @Injectable()
 export class QuizSessionService {
