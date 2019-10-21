@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { QuizSessionService } from "./QuizSession.service";
 import { QuizSessionController } from './QuizSession.controller';
-import { QuizzesModule } from "src/quizzes/quizzes.module";
+import { QuizzesModule } from "../quizzes/quizzes.module";
 
 @Module({
     imports: [QuizzesModule],

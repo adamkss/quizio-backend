@@ -3,9 +3,7 @@ import { CoursesController } from './courses.controller';
 import { CoursesService } from './courses.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './course.entity';
-import { Question } from '../questions/question.entity';
-import { QuestionOption } from '../question-options/questionOption.entity';
-import { QuizzesModule } from 'src/quizzes/quizzes.module';
+import { QuizzesModule } from '../quizzes/quizzes.module';
 
 @Module({
   imports: [
