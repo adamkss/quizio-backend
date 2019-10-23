@@ -4,6 +4,7 @@ import { QuizzesController } from './quizzes.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Quiz } from './quiz.entity';
 import { QuestionsModule } from '../questions/questions.module';
+import { GenericQuizzesController } from './generic-quizzes.controller';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { QuestionsModule } from '../questions/questions.module';
     QuestionsModule
   ],
   providers: [QuizzesService],
-  controllers: [QuizzesController],
+  controllers: [QuizzesController, GenericQuizzesController],
   exports: [QuizzesService]
 })
 export class QuizzesModule { }
