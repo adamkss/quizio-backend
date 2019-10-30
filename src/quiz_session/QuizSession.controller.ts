@@ -10,7 +10,7 @@ export class QuizSessionController {
     @Post('/by-quizzes/:quizId')
     async createSessionForQuiz(@Param('quizId') quizId) {
         return {
-            sessionId: await this.quizService.createNewSessionForQuiz(quizId)
+            sessionId: await this.quizService.createNewSessionForQuiz(quizId, false)
         }
     }
 
@@ -22,5 +22,10 @@ export class QuizSessionController {
     @Post('/:sessionId/clientAnswers')
     verifyAnswer(@Param('sessionId') sessionCode, @Body() body: any) {
         return this.quizService.validateAnswerForQuestion(sessionCode, body.questionId, body.answerId);
+    }
+
+    @Get('/:sessionId/statistics')
+    getStatistics(@Param('sessionId') sessionId) {
+        return this.quizService.getQuizStatistics(sessionId);
     }
 }

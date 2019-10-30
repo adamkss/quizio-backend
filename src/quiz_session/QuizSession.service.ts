@@ -10,7 +10,7 @@ export class QuizSessionService {
         private readonly quizzesService: QuizzesService
     ) { }
 
-    private initializeQuestionsForSession(sessionCode: string, questions: Question[]) {
+    private initializeQuestionsForSession(sessionCode: string, questions: Question[], isForLearning: boolean) {
         const sessionData = {
             questions: [...questions],
             wronglyAnsweredQuestionsIndexes: [],
@@ -18,7 +18,8 @@ export class QuizSessionService {
             wereAllAnsweredAtLeastOnce: false,
             progressUnit: (1 / questions.length) * 100,
             progress: 0,
-            waitingAnswerForQuestion: null
+            waitingAnswerForQuestion: null,
+            isForLearning
         };
 
         this.sessionsQuestionsMap[sessionCode] = sessionData;
@@ -91,8 +92,10 @@ export class QuizSessionService {
                     progress: sessionData.progress
                 };
             } else {
-                console.log('Pushed to wrong answers')
-                sessionData.wronglyAnsweredQuestionsIndexes.push(questionIndexInQuestions);
+                if (sessionData.isForLearning) {
+                    console.log('Pushed to wrong answers')
+                    sessionData.wronglyAnsweredQuestionsIndexes.push(questionIndexInQuestions);
+                }
                 return {
                     valid: false,
                     progress: 0
@@ -103,14 +106,21 @@ export class QuizSessionService {
         }
     }
 
-    async createNewSessionForQuiz(quizId) {
+    async createNewSessionForQuiz(quizId, isForLearning) {
         let nextSessionId;
         do {
             nextSessionId = Math.ceil(Math.random() * 1000);
         } while (this.sessionsQuestionsMap[nextSessionId]);
 
-        this.initializeQuestionsForSession(nextSessionId, await this.quizzesService.getAllQuestionsOfAQuiz(quizId));
+        this.initializeQuestionsForSession(nextSessionId, await this.quizzesService.getAllQuestionsOfAQuiz(quizId), isForLearning);
 
         return nextSessionId;
+    }
+
+    getQuizStatistics(sessionId) {
+        const session = this.sessionsQuestionsMap[sessionId];
+        return {
+            progress: Math.round(session.progress)
+        }
     }
 }
