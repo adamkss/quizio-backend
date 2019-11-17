@@ -8,6 +8,8 @@ import { CoursesModule } from './courses/courses.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { QuestionsModule } from './questions/questions.module';
 import { QuestionOptionsModule } from './question-options/question-options.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { QuestionOptionsModule } from './question-options/question-options.modul
     CoursesModule,
     QuizzesModule,
     QuestionsModule,
-    QuestionOptionsModule
+    QuestionOptionsModule,
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
