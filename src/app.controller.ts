@@ -1,9 +1,11 @@
-import { Controller, Request, Post, Get, UseGuards } from '@nestjs/common';
+import { Controller, Request, Post, Get, UseGuards, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth/auth.service';
+import { UsersService } from './users/users.service';
 @Controller()
 export class AppController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService,
+    private readonly userService: UsersService) { }
 
   @UseGuards(AuthGuard('local'))
   @Post('auth/login')
@@ -15,5 +17,12 @@ export class AppController {
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @Post('register')
+  async registerUser(@Body() newUser) {
+    const user = await this.userService.createNewUser(newUser.email, newUser.password);
+    const {passwordHash, ...newUserWithoutPassword} = user;
+    return newUserWithoutPassword;
   }
 }
