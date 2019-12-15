@@ -29,7 +29,7 @@ export class CoursesService {
 
     async createQuiz(courseId, quizName): Promise<Quiz> {
         const course: Course = await this.getCourseById(courseId);
-        return this.quizzesService.createQuiz(quizName, course);
+        return this.quizzesService.createQuiz(quizName, null, course);
     }
 
     async getAllQuizesOfCourse(courseId) {

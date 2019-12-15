@@ -5,6 +5,7 @@ import { Course } from '../courses/course.entity';
 import { Repository, DeleteResult } from 'typeorm';
 import { QuestionsService } from '../questions/questions.service';
 import { Question } from '../questions/question.entity';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class QuizzesService {
@@ -13,12 +14,14 @@ export class QuizzesService {
         private readonly questionService: QuestionsService
     ) { }
 
-    async createQuiz(quizName: string, course?: Course): Promise<Quiz> {
+    async createQuiz(quizName: string, owner: User, course?: Course): Promise<any> {
         const quiz = new Quiz();
         quiz.name = quizName;
         quiz.course = course;
-
-        return await this.quizRepository.save(quiz);
+        quiz.owner = owner;
+        const newQuizz =  await this.quizRepository.save(quiz);
+        const {owner: ownerInfo, ...newQuizzData} = newQuizz;
+        return newQuizzData;
     }
 
     getQuizById(id: number): Promise<Quiz> {

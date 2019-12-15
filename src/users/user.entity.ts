@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Quiz } from "src/quizzes/quiz.entity";
 
 @Entity()
 export class User {
@@ -10,4 +11,7 @@ export class User {
 
     @Column()
     passwordHash: string;
+
+    @OneToMany(type => Quiz, quiz => quiz.owner)
+    ownedQuizzes: Promise<Quiz[]>;
 }
