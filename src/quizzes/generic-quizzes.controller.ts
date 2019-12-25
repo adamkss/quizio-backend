@@ -36,6 +36,7 @@ export class GenericQuizzesController {
     }
 
     @Delete('/:quizId')
+    @UseGuards(AuthGuard('jwt'))
     async deleteQuiz(@Param('quizId') quizId, @Res() response) {
         const wasDeletedSuccessfully = await this.quizzesService.deleteQuiz(quizId);
         wasDeletedSuccessfully ? response.status(204).end() : response.status(404).end();
