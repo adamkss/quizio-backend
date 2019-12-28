@@ -107,6 +107,7 @@ export class QuizSessionService {
     }
 
     async createNewSessionForQuiz(quizId, isForLearning) {
+        //Generate a random session id for the quiz
         let nextSessionId;
         do {
             nextSessionId = Math.ceil(Math.random() * 1000);

@@ -19,4 +19,10 @@ export class Quiz {
 
     @ManyToOne(type => User, user => user.ownedQuizzes)
     owner: User;
+
+    @Column()
+    askForQuizTakerName: boolean;
+
+    @Column()
+    showResultAtTheEnd: boolean;
 }

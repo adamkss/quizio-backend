@@ -19,13 +19,19 @@ export class QuizzesService {
         quiz.name = quizName;
         quiz.course = course;
         quiz.owner = owner;
-        const newQuizz =  await this.quizRepository.save(quiz);
-        const {owner: ownerInfo, ...newQuizzData} = newQuizz;
+        const newQuizz = await this.quizRepository.save(quiz);
+        const { owner: ownerInfo, ...newQuizzData } = newQuizz;
         return newQuizzData;
     }
 
     getQuizById(id: number): Promise<Quiz> {
         return this.quizRepository.findOne(id);
+    }
+
+    async getQuizByIdSafe(id): Promise<any> {
+        const quiz: Quiz = await this.quizRepository.findOne(id);
+        const {owner, ...safeQuizInfo} = quiz;
+        return safeQuizInfo;
     }
 
     async getAllQuestionsOfAQuiz(quizId) {
@@ -50,5 +56,14 @@ export class QuizzesService {
             options,
             rightAnswer
         );
+    }
+
+    async updateQuizSettings(quizId, newQuizName, askForQuiztakerName, showResultAtEndOfQuiz) {
+        const quizToUpdate: Quiz = await this.quizRepository.findOne(quizId);
+        quizToUpdate.name = newQuizName;
+        quizToUpdate.askForQuizTakerName = askForQuiztakerName;
+        quizToUpdate.showResultAtTheEnd = showResultAtEndOfQuiz;
+
+        await this.quizRepository.save(quizToUpdate);
     }
 }
