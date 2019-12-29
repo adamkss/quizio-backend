@@ -1,16 +1,20 @@
 import { Injectable } from "@nestjs/common";
 import { Question } from '../questions/question.entity';
 import { QuizzesService } from "../quizzes/quizzes.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { QuizSession } from "./QuizSesssion.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class QuizSessionService {
     sessionsQuestionsMap = {};
 
     constructor(
-        private readonly quizzesService: QuizzesService
+        private readonly quizzesService: QuizzesService,
+        @InjectRepository(QuizSession) private readonly quizSessionRepository: Repository<QuizSession>
     ) { }
 
-    private initializeQuestionsForSession(sessionCode: string, questions: Question[], isForLearning: boolean) {
+    private initializeQuestionsForSession(sessionCode: string, questions: Question[], isForLearning: boolean, options) {
         const sessionData = {
             questions: [...questions],
             wronglyAnsweredQuestionsIndexes: [],
@@ -19,7 +23,8 @@ export class QuizSessionService {
             progressUnit: (1 / questions.length) * 100,
             progress: 0,
             waitingAnswerForQuestion: null,
-            isForLearning
+            isForLearning,
+            quizTakerName: options.quizTakerName || ""
         };
 
         this.sessionsQuestionsMap[sessionCode] = sessionData;
@@ -53,6 +58,13 @@ export class QuizSessionService {
                     progress: sessionData.progress
                 }
             } else {
+                //The quiz is done. Save it in the DB and return Done to the user.
+                const quizSession: QuizSession = new QuizSession();
+                quizSession.quizTakerName = sessionData.quizTakerName;
+                quizSession.result = sessionData.progress;
+                quizSession.date = new Date().toLocaleString();
+                this.quizSessionRepository.save(quizSession);
+
                 return {
                     question: null,
                     done: true,
@@ -106,14 +118,14 @@ export class QuizSessionService {
         }
     }
 
-    async createNewSessionForQuiz(quizId, isForLearning) {
+    async createNewSessionForQuiz(quizId, isForLearning, options) {
         //Generate a random session id for the quiz
         let nextSessionId;
         do {
             nextSessionId = Math.ceil(Math.random() * 1000);
         } while (this.sessionsQuestionsMap[nextSessionId]);
 
-        this.initializeQuestionsForSession(nextSessionId, await this.quizzesService.getAllQuestionsOfAQuiz(quizId), isForLearning);
+        this.initializeQuestionsForSession(nextSessionId, await this.quizzesService.getAllQuestionsOfAQuiz(quizId), isForLearning, options);
 
         return nextSessionId;
     }

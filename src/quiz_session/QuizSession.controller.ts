@@ -8,9 +8,9 @@ export class QuizSessionController {
     ) { }
 
     @Post('/by-quizzes/:quizId')
-    async createSessionForQuiz(@Param('quizId') quizId) {
+    async createSessionForQuiz(@Param('quizId') quizId, @Body() options) {
         return {
-            sessionId: await this.quizService.createNewSessionForQuiz(quizId, false)
+            sessionId: await this.quizService.createNewSessionForQuiz(quizId, false, options)
         }
     }
 
