@@ -64,9 +64,16 @@ export class GenericQuizzesController {
             quizSettings.quizName,
             quizSettings.askForQuiztakerName,
             quizSettings.showResultAtEndOfQuiz
-        );
-        //return success, no content
-        response.status(204).end();
+            );
+            //return success, no content
+            response.status(204).end();
+        }
+        
+    @Get("/:quizId/results")
+    // @UseGuards(AuthGuard('jwt'))
+    async getQuizResults(@Param('quizId') quizId) {
+        const quiz:Quiz = await this.quizzesService.getQuizById(quizId);
+        return await quiz.finishedQuizSessions;
     }
 }
 

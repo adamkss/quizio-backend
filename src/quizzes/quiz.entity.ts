@@ -2,6 +2,7 @@ import {Entity, PrimaryGeneratedColumn, OneToMany, Column, ManyToOne} from 'type
 import { Question } from '../questions/question.entity';
 import { Course } from '../courses/course.entity';
 import { User } from 'src/users/user.entity';
+import { QuizSession } from 'src/quiz_session/QuizSesssion.entity';
 
 @Entity()
 export class Quiz {
@@ -25,4 +26,7 @@ export class Quiz {
 
     @Column()
     showResultAtTheEnd: boolean;
+
+    @OneToMany(type => QuizSession, quizSession => quizSession.quiz) 
+    finishedQuizSessions: Promise<QuizSession[]>; 
 }

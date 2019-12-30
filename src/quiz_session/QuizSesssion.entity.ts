@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Quiz } from "src/quizzes/quiz.entity";
 
 @Entity()
 export class QuizSession {
@@ -13,4 +14,7 @@ export class QuizSession {
 
     @Column()
     date: string;
+
+    @ManyToOne(type => Quiz, quiz => quiz.finishedQuizSessions)
+    quiz: Quiz;
 }

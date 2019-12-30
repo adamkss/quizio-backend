@@ -14,9 +14,10 @@ export class QuizSessionService {
         @InjectRepository(QuizSession) private readonly quizSessionRepository: Repository<QuizSession>
     ) { }
 
-    private initializeQuestionsForSession(sessionCode: string, questions: Question[], isForLearning: boolean, options) {
+    private initializeQuestionsForSession(sessionCode: string, quizId, questions: Question[], isForLearning: boolean, options) {
         const sessionData = {
             questions: [...questions],
+            quizId,
             wronglyAnsweredQuestionsIndexes: [],
             nextQuestionIndex: 0,
             wereAllAnsweredAtLeastOnce: false,
@@ -24,10 +25,20 @@ export class QuizSessionService {
             progress: 0,
             waitingAnswerForQuestion: null,
             isForLearning,
-            quizTakerName: options.quizTakerName || ""
+            quizTakerName: options.quizTakerName || "",
+            savedToDB: false,
         };
 
         this.sessionsQuestionsMap[sessionCode] = sessionData;
+    }
+
+    async saveFinishedQuizSession(sessionData) {
+        const quizSession: QuizSession = new QuizSession();
+        quizSession.quizTakerName = sessionData.quizTakerName;
+        quizSession.result = sessionData.progress;
+        quizSession.date = new Date().toLocaleString();
+        quizSession.quiz = await this.quizzesService.getQuizById(sessionData.quizId);
+        await this.quizSessionRepository.save(quizSession);
     }
 
     getNextQuestionForSession(sessionCode) {
@@ -58,12 +69,11 @@ export class QuizSessionService {
                     progress: sessionData.progress
                 }
             } else {
-                //The quiz is done. Save it in the DB and return Done to the user.
-                const quizSession: QuizSession = new QuizSession();
-                quizSession.quizTakerName = sessionData.quizTakerName;
-                quizSession.result = sessionData.progress;
-                quizSession.date = new Date().toLocaleString();
-                this.quizSessionRepository.save(quizSession);
+                //The quiz is done. Save it in the DB if it hasn't been saved yet and return Done to the user.
+                if(!sessionData.savedToDB) {
+                    this.saveFinishedQuizSession(sessionData);
+                    sessionData.savedToDB = true;
+                }
 
                 return {
                     question: null,
@@ -125,7 +135,7 @@ export class QuizSessionService {
             nextSessionId = Math.ceil(Math.random() * 1000);
         } while (this.sessionsQuestionsMap[nextSessionId]);
 
-        this.initializeQuestionsForSession(nextSessionId, await this.quizzesService.getAllQuestionsOfAQuiz(quizId), isForLearning, options);
+        this.initializeQuestionsForSession(nextSessionId, quizId, await this.quizzesService.getAllQuestionsOfAQuiz(quizId), isForLearning, options);
 
         return nextSessionId;
     }
