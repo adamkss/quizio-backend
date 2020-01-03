@@ -18,9 +18,10 @@ export class UsersService {
     return this.userRepository.findOne(id);
   }
 
-  async createNewUser(email: string, password: string): Promise<User> {
+  async createNewUser(email: string, password: string, name: string): Promise<User> {
     const newUser = new User();
     newUser.email = email;
+    newUser.name = name;
     newUser.passwordHash = await new Promise((resolve, reject) => {
       bcrypt.hash(password, 10, function (err, hash) {
         if (err) reject(err);

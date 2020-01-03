@@ -10,6 +10,9 @@ export class User {
     email: string;
 
     @Column()
+    name: string;
+    
+    @Column()
     passwordHash: string;
 
     @OneToMany(type => Quiz, quiz => quiz.owner)

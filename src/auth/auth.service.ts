@@ -14,7 +14,7 @@ export class AuthService {
     const user = await this.usersService.findOne(username);
     if (!user)
       return null;
-      
+
     const isPasswordRight = await new Promise((resolve, reject) => {
       bcrypt.compare(pass, user.passwordHash, (err, res) => {
         if (res) {
@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, id: user.id };
+    const payload = { email: user.email, id: user.id, name: user.name };
     return {
       access_token: this.jwtService.sign(payload),
     };

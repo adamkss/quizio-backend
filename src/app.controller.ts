@@ -21,7 +21,7 @@ export class AppController {
 
   @Post('register')
   async registerUser(@Body() newUser) {
-    const user = await this.userService.createNewUser(newUser.email, newUser.password);
+    const user = await this.userService.createNewUser(newUser.email, newUser.password, newUser.name || "Anonymous");
     const {passwordHash, ...newUserWithoutPassword} = user;
     return newUserWithoutPassword;
   }
