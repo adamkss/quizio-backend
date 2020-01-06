@@ -19,9 +19,8 @@ export class AuthService {
       bcrypt.compare(pass, user.passwordHash, (err, res) => {
         if (res) {
           resolve(true);
-        }
-        if (err) {
-          reject();
+        } else {
+          resolve(false);
         }
       })
     });
