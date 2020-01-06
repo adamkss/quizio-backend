@@ -1,8 +1,8 @@
 import {Entity, PrimaryGeneratedColumn, OneToMany, Column, ManyToOne} from 'typeorm';
 import { Question } from '../questions/question.entity';
 import { Course } from '../courses/course.entity';
-import { User } from 'src/users/user.entity';
-import { QuizSession } from 'src/quiz_session/QuizSesssion.entity';
+import { User } from '../users/user.entity';
+import { QuizSession } from '../quiz_session/QuizSesssion.entity';
 
 @Entity()
 export class Quiz {

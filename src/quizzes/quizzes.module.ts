@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Quiz } from './quiz.entity';
 import { QuestionsModule } from '../questions/questions.module';
 import { GenericQuizzesController } from './generic-quizzes.controller';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [

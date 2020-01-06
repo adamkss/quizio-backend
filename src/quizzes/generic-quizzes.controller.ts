@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Post, Body, Res, Delete, UseGuards, Request, Put } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
 import { AuthGuard } from '@nestjs/passport';
-import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/user.entity';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/user.entity';
 import { Quiz } from './quiz.entity';
 
 @Controller('genericQuizzes')
