@@ -6,7 +6,7 @@ import { Repository, DeleteResult } from 'typeorm';
 import { QuestionsService } from '../questions/questions.service';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class QuizzesService {
