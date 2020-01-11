@@ -70,7 +70,7 @@ export class QuizSessionService {
                 }
             } else {
                 //The quiz is done. Save it in the DB if it hasn't been saved yet and return Done to the user.
-                if(!sessionData.savedToDB) {
+                if (!sessionData.savedToDB) {
                     this.saveFinishedQuizSession(sessionData);
                     sessionData.savedToDB = true;
                 }
@@ -145,5 +145,9 @@ export class QuizSessionService {
         return {
             progress: Math.round(session.progress)
         }
+    }
+
+    abandonQuizSession(sessionId) {
+        this.sessionsQuestionsMap[sessionId] = null;
     }
 }

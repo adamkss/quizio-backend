@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Res, Delete, UseGuards, Request, Put } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Res, Delete, UseGuards, Request, Put, Req } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from '../users/users.service';
@@ -17,6 +17,11 @@ export class GenericQuizzesController {
     async createGenericQuiz(@Body() { newQuizName }: NewQuizInfo, @Request() req) {
         const owner: User = await this.usersService.getUserById(req.user.id);
         return await this.quizzesService.createQuiz(newQuizName, owner);
+    }
+
+    @Post('/anonymousQuizzes')
+    async createGenericAnonymousQuiz(@Body() { newQuizName }: NewQuizInfo) {
+        return await this.quizzesService.createQuiz(newQuizName);
     }
 
     @Get('/:quizId/questions')
@@ -64,16 +69,23 @@ export class GenericQuizzesController {
             quizSettings.quizName,
             quizSettings.askForQuiztakerName,
             quizSettings.showResultAtEndOfQuiz
-            );
-            //return success, no content
-            response.status(204).end();
-        }
-        
+        );
+        //return success, no content
+        response.status(204).end();
+    }
+
     @Get("/:quizId/results")
     // @UseGuards(AuthGuard('jwt'))
     async getQuizResults(@Param('quizId') quizId) {
-        const quiz:Quiz = await this.quizzesService.getQuizById(quizId);
+        const quiz: Quiz = await this.quizzesService.getQuizById(quizId);
         return await quiz.finishedQuizSessions;
+    }
+
+    @Put('/:quizId/owner')
+    @UseGuards(AuthGuard('jwt'))
+    async assignAnonymousQuizToUser(@Param('quizId') quizId, @Req() req) {
+        const userId = req.user.id;
+        this.quizzesService.assignAnonymousQuizToUser(quizId, userId);
     }
 }
 

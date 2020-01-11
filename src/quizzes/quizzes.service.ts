@@ -6,15 +6,17 @@ import { Repository, DeleteResult } from 'typeorm';
 import { QuestionsService } from '../questions/questions.service';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class QuizzesService {
     constructor(
         @InjectRepository(Quiz) private readonly quizRepository: Repository<Quiz>,
-        private readonly questionService: QuestionsService
+        private readonly questionService: QuestionsService,
+        private readonly userService: UsersService
     ) { }
 
-    async createQuiz(quizName: string, owner: User, course?: Course): Promise<any> {
+    async createQuiz(quizName: string, owner?: User, course?: Course): Promise<any> {
         const quiz = new Quiz();
         quiz.name = quizName;
         quiz.course = course;
@@ -29,9 +31,14 @@ export class QuizzesService {
     }
 
     async getQuizByIdSafe(id): Promise<any> {
-        const quiz: Quiz = await this.quizRepository.findOne(id);
-        const {owner, ...safeQuizInfo} = quiz;
-        return safeQuizInfo;
+        const quiz: Quiz = await this.quizRepository.findOne(id, { relations: ['owner'] });
+        console.log(quiz);
+        const { owner, ...safeQuizInfo } = quiz;
+        return {
+            ...safeQuizInfo,
+            anonymous: owner == null
+        };
+        return quiz;
     }
 
     async getAllQuestionsOfAQuiz(quizId) {
@@ -65,5 +72,15 @@ export class QuizzesService {
         quizToUpdate.showResultAtTheEnd = showResultAtEndOfQuiz;
 
         await this.quizRepository.save(quizToUpdate);
+    }
+
+    async assignAnonymousQuizToUser(quizId, userId) {
+        const quizToAssign: Quiz = await this.quizRepository.findOne(quizId, { relations: ['owner'] });
+        const user: User = await this.userService.getUserById(userId);
+        if (quizToAssign.owner) {
+            throw 'Quiz already has an owner!';
+        }
+        quizToAssign.owner = user;
+        await this.quizRepository.save(quizToAssign);
     }
 }

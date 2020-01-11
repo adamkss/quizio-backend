@@ -16,9 +16,9 @@ export class QuizSessionController {
 
     @Get('/:sessionId/nextQuestion')
     getNextQuestionForQuiz(@Param('sessionId') sessionId) {
-      return this.quizService.getNextQuestionForSession(sessionId);
+        return this.quizService.getNextQuestionForSession(sessionId);
     }
-    
+
     @Post('/:sessionId/clientAnswers')
     verifyAnswer(@Param('sessionId') sessionCode, @Body() body: any) {
         return this.quizService.validateAnswerForQuestion(sessionCode, body.questionId, body.answerId);
@@ -27,5 +27,10 @@ export class QuizSessionController {
     @Get('/:sessionId/statistics')
     getStatistics(@Param('sessionId') sessionId) {
         return this.quizService.getQuizStatistics(sessionId);
+    }
+
+    @Post('/:sessionId/abandon')
+    abandonSesssion(@Param('sessionId') sessionId) {
+        this.quizService.abandonQuizSession(sessionId);
     }
 }
