@@ -1,5 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, OneToMany, Column, ManyToOne} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, OneToMany, Column, ManyToOne } from 'typeorm';
 import { User } from '../users/user.entity';
+import { TestQuestion } from './test-question.entity';
 
 @Entity()
 export class Test {
@@ -14,4 +15,7 @@ export class Test {
 
     @Column()
     showResultAtTheEnd: boolean;
+
+    @OneToMany(type => TestQuestion, testQuestion => testQuestion.test)
+    questions: Promise<TestQuestion[]>;
 }
