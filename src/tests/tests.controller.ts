@@ -71,4 +71,10 @@ export class TestsController {
     async deleteQuestionOption(@Param('questionOptionId') questionOptionId) {
         return await this.testsService.deleteQuestionOption(questionOptionId);
     }
+
+    @Delete('/questions/:questionId')
+    @HttpCode(204)
+    async deleteQuestion(@Param('questionId') questionId) {
+        return await this.testsService.deleteQuestion(questionId);
+    }
 }

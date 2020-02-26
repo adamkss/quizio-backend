@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Test } from "./test.entity";
-import { Repository } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import { User } from "src/users/user.entity";
 import { TestQuestion } from "./test-question.entity";
 import { TestQuestionOption } from "./test-question-option.entity";
@@ -18,6 +18,7 @@ export class TestsService {
         const test: Test = new Test();
         test.name = testName;
         test.owner = owner;
+        test.numberOfQuestions = 0;
         const { owner: testOwner, ...testWithoutOwner } = await this.testsRepository.save(test);
         return testWithoutOwner;
     }
@@ -50,7 +51,8 @@ export class TestsService {
         const testQuestion: TestQuestion = new TestQuestion();
         testQuestion.questionTitle = questionText;
         testQuestion.test = test;
-        this.testQuestionsRepository.save(testQuestion);
+        testQuestion.questionOrderNumber = test.numberOfQuestions + 1;
+        await this.testQuestionsRepository.save(testQuestion);
 
         for (const index in initialQuestionOptions) {
             const questionOption = new TestQuestionOption();
@@ -59,6 +61,9 @@ export class TestsService {
             questionOption.amITheRightAnswer = false;
             await this.testQuestionOptionsRepository.save(questionOption);
         }
+
+        test.numberOfQuestions = test.numberOfQuestions + 1;
+        await this.testsRepository.save(test);
     }
 
     async addQuestionOptionToQuestion(questionId, questionOptionText) {
@@ -102,5 +107,25 @@ export class TestsService {
 
     async deleteQuestionOption(questionOptionId) {
         await this.testQuestionOptionsRepository.delete(questionOptionId);
+    }
+
+    async deleteQuestion(questionId) {
+        const question: TestQuestion = await this.testQuestionsRepository.findOne(questionId, { relations: ['test'] });
+        const test: Test = question.test;
+        const questionOrderNumber = question.questionOrderNumber;
+        const questionsWithHigherOrderNumber: TestQuestion[] = await this.testQuestionsRepository.find({
+            questionOrderNumber: MoreThan(questionOrderNumber)
+        });
+
+        test.numberOfQuestions = test.numberOfQuestions - 1;
+        await this.testQuestionsRepository.delete(questionId);
+        await this.testsRepository.save(test);
+        await Promise.all(questionsWithHigherOrderNumber.map(question =>
+            new Promise(async (resolve, reject) => {
+                question.questionOrderNumber--;
+                await this.testQuestionsRepository.save(question);
+                resolve();
+            })
+        ));
     }
 }

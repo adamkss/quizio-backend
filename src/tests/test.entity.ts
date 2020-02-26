@@ -14,6 +14,9 @@ export class Test {
     owner: User;
 
     @Column()
+    numberOfQuestions: number;
+
+    @Column()
     showResultAtTheEnd: boolean;
 
     @OneToMany(type => TestQuestion, testQuestion => testQuestion.test)

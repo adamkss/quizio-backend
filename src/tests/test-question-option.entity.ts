@@ -9,7 +9,7 @@ export class TestQuestionOption {
     @Column()
     questionOptionText: string;
 
-    @ManyToOne(type => TestQuestion, testQuestion => testQuestion.questionOptions)
+    @ManyToOne(type => TestQuestion, testQuestion => testQuestion.questionOptions, {onDelete: 'CASCADE'})
     testQuestion: TestQuestion;
 
     @Column()

@@ -10,6 +10,9 @@ export class TestQuestion {
     @Column()
     questionTitle: string;
 
+    @Column()
+    questionOrderNumber: number;
+
     @ManyToOne(type => Test, test => test.questions)
     test: Test;
 
