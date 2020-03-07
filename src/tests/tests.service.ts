@@ -128,4 +128,23 @@ export class TestsService {
             })
         ));
     }
+
+    async changeQuestionOrders(testId, sourceIndex, targetIndex) {
+        if (sourceIndex != targetIndex) {
+            const test: Test = await this.testsRepository.findOne(testId, { relations: ['questions'] });
+            const questions: TestQuestion[] = (await test.questions).sort((a, b) => a.questionOrderNumber - b.questionOrderNumber);
+            if (sourceIndex < targetIndex) {
+                for (let i = (sourceIndex + 1); i < targetIndex; i++) {
+                    questions[i - 1].questionOrderNumber--;
+                }
+                questions[sourceIndex - 1].questionOrderNumber = targetIndex - 1;
+            } else {
+                for (let i = (sourceIndex - 1); i >= targetIndex; i--) {
+                    questions[i - 1].questionOrderNumber++;
+                }
+                questions[sourceIndex - 1].questionOrderNumber = targetIndex;
+            }
+            await this.testQuestionsRepository.save(questions);
+        }
+    }
 }

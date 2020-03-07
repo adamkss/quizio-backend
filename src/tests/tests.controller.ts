@@ -77,4 +77,9 @@ export class TestsController {
     async deleteQuestion(@Param('questionId') questionId) {
         return await this.testsService.deleteQuestion(questionId);
     }
+
+    @Put('/:testId/questionOrders')
+    async moveQuestions(@Param('testId') testId, @Body() { sourceIndex, targetIndex }) {
+        await this.testsService.changeQuestionOrders(testId, sourceIndex + 1, targetIndex + 1);
+    }
 }
