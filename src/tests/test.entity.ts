@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, OneToMany, Column, ManyToOne } from 'typeorm';
 import { User } from '../users/user.entity';
 import { TestQuestion } from './test-question.entity';
+import { EntryCode } from './entry-code.entity';
 
 @Entity()
 export class Test {
@@ -21,4 +22,7 @@ export class Test {
 
     @OneToMany(type => TestQuestion, testQuestion => testQuestion.test)
     questions: Promise<TestQuestion[]>;
+
+    @OneToMany(type => EntryCode, entryCode => entryCode.test)
+    entryCodes: Promise<EntryCode[]>;
 }

@@ -3,12 +3,15 @@ import { TestsService } from "./tests.service";
 import { AuthGuard } from "@nestjs/passport";
 import { UsersService } from "src/users/users.service";
 import { User } from '../users/user.entity';
+import { EntryCodesService } from "./entry-codes.service";
+import { EntryCode } from "./entry-code.entity";
 
 @Controller('tests')
 export class TestsController {
     constructor(
         private readonly testsService: TestsService,
-        private readonly usersService: UsersService
+        private readonly usersService: UsersService,
+        private readonly entryCodesService: EntryCodesService,
     ) { }
 
     @Get()
@@ -81,5 +84,24 @@ export class TestsController {
     @Put('/:testId/questionOrders')
     async moveQuestions(@Param('testId') testId, @Body() { sourceIndex, targetIndex }) {
         await this.testsService.changeQuestionOrders(testId, sourceIndex + 1, targetIndex + 1);
+    }
+
+    @Post('/:testId/entryCodes')
+    async createNewEntryCode(@Param('testId') testId, @Body() { numberOfNewEntryCodes }) {
+        return (await this.entryCodesService.generateNewCode(
+            await this.testsService.getTestById(testId),
+            numberOfNewEntryCodes
+        )).map((code: EntryCode) => {
+            return {
+                id: code.id,
+                code: code.code,
+                name: code.name
+            }
+        });
+    }
+
+    @Put('/:testId/entryCodes/:entryCodeId/name')
+    async updateNameOfEntryCode(@Param('testId') testId, @Param('entryCodeId') entryCodeId, @Body() { newName }) {
+        await this.entryCodesService.updateNameOfEntryCode(entryCodeId, newName);
     }
 }

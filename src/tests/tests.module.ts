@@ -6,13 +6,15 @@ import { TestsController } from './tests.controller';
 import { UsersModule } from 'src/users/users.module';
 import { TestQuestion } from './test-question.entity';
 import { TestQuestionOption } from './test-question-option.entity';
+import { EntryCode } from './entry-code.entity';
+import { EntryCodesService } from './entry-codes.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Test, TestQuestion, TestQuestionOption]),
+        TypeOrmModule.forFeature([Test, TestQuestion, TestQuestionOption, EntryCode]),
         UsersModule
     ],
-    providers: [TestsService],
+    providers: [TestsService, EntryCodesService],
     controllers: [TestsController]
 })
 export class TestsModule { }
