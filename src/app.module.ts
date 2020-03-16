@@ -2,7 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {CorsMiddleware} from './middleware/cors.middleware';
+import { CorsMiddleware } from './middleware/cors.middleware';
 import { QuizSessionModule } from './quiz_session/QuizSession.module';
 import { CoursesModule } from './courses/courses.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
@@ -11,6 +11,7 @@ import { QuestionOptionsModule } from './question-options/question-options.modul
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TestsModule } from './tests/tests.module';
+import { TestSessionModule } from './test-session/TestSession.module';
 
 @Module({
   imports: [
@@ -22,12 +23,13 @@ import { TestsModule } from './tests/tests.module';
     QuestionOptionsModule,
     AuthModule,
     UsersModule,
-    TestsModule
+    TestsModule,
+    TestSessionModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule{ 
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(CorsMiddleware)

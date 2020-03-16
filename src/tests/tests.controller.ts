@@ -104,4 +104,11 @@ export class TestsController {
     async updateNameOfEntryCode(@Param('testId') testId, @Param('entryCodeId') entryCodeId, @Body() { newName }) {
         await this.entryCodesService.updateNameOfEntryCode(entryCodeId, newName);
     }
+
+    @Get('/:testId/entryCodes/unfinished')
+    async getAllUnfinishedEntryCodesOfATest(@Param('testId') testId) {
+        return await this.entryCodesService.getAllUnfinishedEntryCodesOfATest(
+            await this.testsService.getTestById(testId)
+        )
+    }
 }

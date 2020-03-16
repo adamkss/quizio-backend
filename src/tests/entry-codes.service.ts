@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EntryCode } from "./entry-code.entity";
+import { EntryCode, EntryCodeStatus } from "./entry-code.entity";
 import { Repository } from "typeorm";
 import { Test } from "./test.entity";
 
@@ -27,6 +27,15 @@ export class EntryCodesService {
         return this.entryCodesRepository.findOne(entryCodeId);
     }
 
+    async getEntryCodeByCode(code: String): Promise<EntryCode> {
+        return await this.entryCodesRepository.findOne({
+            where: {
+                code: code
+            },
+            relations: ['test']
+        });
+    }
+
     async getAllEntryCodesOfATest(test: Test): Promise<EntryCode[]> {
         return await test.entryCodes;
     }
@@ -35,5 +44,9 @@ export class EntryCodesService {
         const entryCode: EntryCode = await this.getEntryCodeById(entryCodeId);
         entryCode.name = newName;
         await this.entryCodesRepository.save(entryCode);
+    }
+
+    async getAllUnfinishedEntryCodesOfATest(test: Test): Promise<EntryCode[]> {
+        return (await test.entryCodes).filter(entryCode => entryCode.status != EntryCodeStatus.DONE);
     }
 }

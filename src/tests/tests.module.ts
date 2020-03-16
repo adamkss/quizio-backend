@@ -15,6 +15,7 @@ import { EntryCodesService } from './entry-codes.service';
         UsersModule
     ],
     providers: [TestsService, EntryCodesService],
-    controllers: [TestsController]
+    controllers: [TestsController],
+    exports: [TestsService, EntryCodesService]
 })
 export class TestsModule { }

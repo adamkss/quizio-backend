@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, OneToMany, Column, ManyToOne } from 'ty
 import { User } from '../users/user.entity';
 import { TestQuestion } from './test-question.entity';
 import { EntryCode } from './entry-code.entity';
+import { TestSession } from '../test-session/TestSession.entity';
 
 @Entity()
 export class Test {
@@ -25,4 +26,7 @@ export class Test {
 
     @OneToMany(type => EntryCode, entryCode => entryCode.test)
     entryCodes: Promise<EntryCode[]>;
+
+    @OneToMany(type => TestSession, session => session.test)
+    testSessions: Promise<EntryCode[]>;
 }
