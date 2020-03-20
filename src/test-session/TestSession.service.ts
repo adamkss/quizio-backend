@@ -72,6 +72,7 @@ export class TestSessionService {
             },
             relations: ['testQuestion', 'testQuestion.questionOptions']
         })).testQuestion;
+        //Rename the field because typeorm returns crappy __questionOptions__ with double underscore ;(
         Object.defineProperty(testQuestion,
             'questionOptions',
             Object.getOwnPropertyDescriptor(testQuestion, '__questionOptions__'));

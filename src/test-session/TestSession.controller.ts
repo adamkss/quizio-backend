@@ -1,6 +1,7 @@
-import { Controller, Post, Param, Body, Get } from '@nestjs/common';
+import { Controller, Post, Param, Body, Get, Res } from '@nestjs/common';
 import { TestSessionService } from './TestSession.service';
 import { EntryCodesService } from 'src/tests/entry-codes.service';
+import { Response } from 'express';
 
 @Controller('test-sessions')
 export class TestSessionController {
@@ -10,11 +11,28 @@ export class TestSessionController {
     ) { }
 
     @Post('/by-entry-codes/:entryCode')
-    async createSessionForQuiz(@Param('entryCode') entryCode) {
-        return {
-            sessionId: await this.testSessionService.createSessionByEntryCode(
-                await this.entryCodesService.getEntryCodeByCode(entryCode)
-            )
+    async createSessionForQuiz(@Param('entryCode') entryCodeString, @Res() response: Response) {
+        const entryCode = await this.entryCodesService.getEntryCodeByCode(entryCodeString);
+        if (entryCode) {
+            response
+                .status(200)
+                .send(
+                    {
+                        sessionId: await this.testSessionService.createSessionByEntryCode(
+                            entryCode
+                        )
+                    }
+                )
+                .end();
+        } else {
+            response
+                .status(404)
+                .send(
+                    {
+                        error: 'Entry code is not valid!'
+                    }
+                )
+                .end();
         }
     }
 
