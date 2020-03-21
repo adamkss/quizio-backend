@@ -48,10 +48,26 @@ export class TestSessionController {
 
     @Get('/:sessionId/questions/:questionId')
     async getQuestionOfASession(@Param('sessionId') sessionId, @Param('questionId') questionId) {
-        return await this.testSessionService.getQuestionOfASession(
+        const question = await this.testSessionService.getQuestionOfASession(
             sessionId,
             questionId
         );
+        //we filter here to not include the "amITheRightAnswer" option
+        question.questionOptions = question.questionOptions
+            .map(questionOption => {
+                const { amITheRightAnswer, ...rest } = questionOption;
+                return { ...rest };
+            })
+        return question;
+    }
+
+    @Get('/:sessionId/testInfo')
+    async getInfoAboutTest(@Param('sessionId') sessionId) {
+        const test = await this.testSessionService.getTestInfoFromSessionId(sessionId);
+        return {
+            testName: test.name,
+            owner: test.owner
+        }
     }
 
     // @Get('/:sessionId/nextQuestion')

@@ -17,5 +17,5 @@ export class TestQuestion {
     test: Test;
 
     @OneToMany(type => TestQuestionOption, testQuestionOption => testQuestionOption.testQuestion)
-    questionOptions: Promise<TestQuestionOption[]>;
+    questionOptions: TestQuestionOption[];
 }

@@ -65,19 +65,19 @@ export class TestSessionService {
 
     async getQuestionOfASession(sessionId: number, questionId: number) {
         const testSession = await this.getTestSessionById(sessionId);
-        let testQuestion: TestQuestion = (await this.testSessionQuestionStateRepository.findOne({
+        let testQuestion: any = (await this.testSessionQuestionStateRepository.findOne({
             where: {
                 testQuestionId: questionId,
                 testSession: testSession,
             },
             relations: ['testQuestion', 'testQuestion.questionOptions']
         })).testQuestion;
-        //Rename the field because typeorm returns crappy __questionOptions__ with double underscore ;(
-        Object.defineProperty(testQuestion,
-            'questionOptions',
-            Object.getOwnPropertyDescriptor(testQuestion, '__questionOptions__'));
-        delete testQuestion['__questionOptions__'];
         return testQuestion;
+    }
+
+    async getTestInfoFromSessionId(sessionId: number): Promise<Test> {
+        const testSession = await this.testSessionRepository.findOne(sessionId, { relations: ['test'] });
+        return testSession.test;
     }
 
     // private initializeQuestionsForSession(sessionCode: string, testId, questions: Question[], isForLearning: boolean, entryCode) {

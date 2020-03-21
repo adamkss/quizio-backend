@@ -28,21 +28,11 @@ export class TestsService {
     }
 
     //gets a test question with all of the question options (thus the complexity... TODO refactor!)
-    async getTestQuestionsOfTest(testId): Promise<any[]> {
-        const test: Test = await this.testsRepository.findOne(testId);
-        const questions = await test.questions;
-        return await Promise.all(
-            questions.map(question =>
-                new Promise((resolve, rej) => {
-                    (async () => {
-                        resolve({
-                            ...question,
-                            questionOptions: await question.questionOptions
-                        })
-                    })();
-                })
-            )
-        )
+    async getTestQuestionsOfTest(testId): Promise<TestQuestion[]> {
+        const test: Test = await this.testsRepository.findOne(testId, {
+            relations: ['questions', 'questions.questionOptions']
+        });
+        return test.questions;
     }
 
     async createTestQuestion(testId, questionText, initialQuestionOptions) {
@@ -80,10 +70,11 @@ export class TestsService {
     }
 
     async updateCorrectAnswerOnQuestion(questionId, newCorrectQuestionOptionId) {
-        const question = await this.testQuestionsRepository.findOne(questionId);
-        const questionOptions: TestQuestionOption[] = await question.questionOptions;
+        const question = await this.testQuestionsRepository.findOne(questionId, {
+            relations: ['questionOptions']
+        });
 
-        await Promise.all(questionOptions.map(questionOption =>
+        await Promise.all(question.questionOptions.map(questionOption =>
             new Promise(async (resolve, rej) => {
                 questionOption.amITheRightAnswer =
                     questionOption.id == newCorrectQuestionOptionId ? true : false;
@@ -97,12 +88,7 @@ export class TestsService {
         const questionWithOptions = await this.testQuestionsRepository.findOne(questionId, {
             relations: ["questionOptions"]
         });
-        const questionOptions = questionWithOptions['__questionOptions__'];
-        delete questionWithOptions['__questionOptions__'];
-        return {
-            ...questionWithOptions,
-            questionOptions
-        }
+        return questionWithOptions;
     }
 
     async deleteQuestionOption(questionOptionId) {
