@@ -133,4 +133,15 @@ export class TestsService {
             await this.testQuestionsRepository.save(questions);
         }
     }
+
+    async verifyCorrectAnswer(testQuestionOptionId, testQuestionId) {
+        const testQuestion = await this.testQuestionsRepository.findOne(testQuestionId);
+        const testQuestionOption = await this.testQuestionOptionsRepository.findOne({
+            where: {
+                testQuestion: testQuestion,
+                amITheRightAnswer: true
+            }
+        });
+        return testQuestionOption.id == testQuestionOptionId;
+    }
 }

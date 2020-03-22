@@ -70,23 +70,8 @@ export class TestSessionController {
         }
     }
 
-    // @Get('/:sessionId/nextQuestion')
-    // getNextQuestionForQuiz(@Param('sessionId') sessionId) {
-    //     return this.testSessionService.getNextQuestionForSession(sessionId);
-    // }
-
-    // @Post('/:sessionId/clientAnswers')
-    // verifyAnswer(@Param('sessionId') sessionCode, @Body() body: any) {
-    //     return this.testSessionService.validateAnswerForQuestion(sessionCode, body.questionId, body.answerId);
-    // }
-
-    // @Get('/:sessionId/statistics')
-    // getStatistics(@Param('sessionId') sessionId) {
-    //     return this.testSessionService.getQuizStatistics(sessionId);
-    // }
-
-    // @Post('/:sessionId/abandon')
-    // abandonSesssion(@Param('sessionId') sessionId) {
-    //     this.testSessionService.abandonQuizSession(sessionId);
-    // }
+    @Post('/:sessionId/submissions')
+    async submitTestSession(@Param('sessionId') sessionId, @Body() testQuestionsStatuses) {
+        return await this.testSessionService.submitTest(sessionId, testQuestionsStatuses);
+    }
 }

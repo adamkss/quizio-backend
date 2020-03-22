@@ -49,4 +49,9 @@ export class EntryCodesService {
     async getAllUnfinishedEntryCodesOfATest(test: Test): Promise<EntryCode[]> {
         return (await test.entryCodes).filter(entryCode => entryCode.status != EntryCodeStatus.DONE);
     }
+
+    async updateStateOfEntryCode(entryCode: EntryCode, status: EntryCodeStatus) {
+        entryCode.status = status;;
+        await this.entryCodesRepository.save(entryCode);
+    }
 }
