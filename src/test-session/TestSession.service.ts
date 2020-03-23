@@ -85,7 +85,7 @@ export class TestSessionService {
 
     async submitTest(sessionId, testSubmitQuestionsState: TestSubmitQuestionState[]) {
         const testSession: TestSession = await this.testSessionRepository.findOne(sessionId, {
-            relations: ['entryCode']
+            relations: ['entryCode', 'test']
         });
         this.entryCodesService.updateStateOfEntryCode(
             testSession.entryCode,
@@ -107,8 +107,14 @@ export class TestSessionService {
         testSession.result = (numberOfCorrectAnswers / testSubmitQuestionsState.length) * 100;
         this.testSessionRepository.save(testSession);
 
-        return {
-            result: testSession.result
+        if (testSession.test.showResultAtTheEnd) {
+            return {
+                result: testSession.result
+            }
+        } else {
+            return {
+                
+            }
         }
     }
 }

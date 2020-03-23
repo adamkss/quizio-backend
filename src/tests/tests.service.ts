@@ -144,4 +144,14 @@ export class TestsService {
         });
         return testQuestionOption.id == testQuestionOptionId;
     }
+
+    async changeSettings(testId, testSettings: TestSettings) {
+        const test: Test = await this.getTestById(testId);
+        test.showResultAtTheEnd = testSettings.showResultAtTheEnd;
+        this.testsRepository.save(test);
+    }
+}
+
+export interface TestSettings {
+    showResultAtTheEnd: boolean;
 }

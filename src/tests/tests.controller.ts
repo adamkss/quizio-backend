@@ -1,5 +1,5 @@
 import { Controller, Post, Put, Body, UseGuards, Req, Get, Param, HttpCode, Delete } from "@nestjs/common";
-import { TestsService } from "./tests.service";
+import { TestsService, TestSettings } from "./tests.service";
 import { AuthGuard } from "@nestjs/passport";
 import { UsersService } from "../users/users.service";
 import { User } from '../users/user.entity';
@@ -110,5 +110,10 @@ export class TestsController {
         return await this.entryCodesService.getAllUnfinishedEntryCodesOfATest(
             await this.testsService.getTestById(testId)
         )
+    }
+
+    @Put('/:testId/settings')
+    async updateSettings(@Param('testId') testId, @Body() settings: TestSettings) {
+        await this.testsService.changeSettings(testId, settings);
     }
 }
