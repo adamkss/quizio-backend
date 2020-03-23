@@ -1,7 +1,7 @@
 import { Controller, Post, Put, Body, UseGuards, Req, Get, Param, HttpCode, Delete } from "@nestjs/common";
 import { TestsService } from "./tests.service";
 import { AuthGuard } from "@nestjs/passport";
-import { UsersService } from "src/users/users.service";
+import { UsersService } from "../users/users.service";
 import { User } from '../users/user.entity';
 import { EntryCodesService } from "./entry-codes.service";
 import { EntryCode } from "./entry-code.entity";

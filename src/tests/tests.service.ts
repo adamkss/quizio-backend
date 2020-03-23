@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Test } from "./test.entity";
 import { Repository, MoreThan } from 'typeorm';
-import { User } from "src/users/user.entity";
+import { User } from "../users/user.entity";
 import { TestQuestion } from "./test-question.entity";
 import { TestQuestionOption } from "./test-question-option.entity";
 

@@ -1,9 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn, ManyToMany, JoinTable } from "typeorm";
-import { Test } from "../tests/test.entity";
-import { EntryCode } from "../tests/entry-code.entity";
-import { TestQuestion } from "src/tests/test-question.entity";
+import { TestQuestion } from "../tests/test-question.entity";
 import { TestSession } from "./TestSession.entity";
-import { TestQuestionOption } from "src/tests/test-question-option.entity";
+import { TestQuestionOption } from "../tests/test-question-option.entity";
 
 @Entity()
 export class TestSessionQuestionState {

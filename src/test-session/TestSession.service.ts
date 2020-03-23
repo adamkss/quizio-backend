@@ -7,10 +7,10 @@ import { Repository } from "typeorm";
 import { TestsService } from "../tests/tests.service"
 import { EntryCode, EntryCodeStatus } from "../tests/entry-code.entity";
 import { Test } from "../tests/test.entity";
-import { TestQuestion } from "src/tests/test-question.entity";
+import { TestQuestion } from "../tests/test-question.entity";
 import { TestSessionQuestionState } from "./TestSessionQuestionState.entity";
-import { TestQuestionSorter } from "src/tests/utils";
-import { EntryCodesService } from "src/tests/entry-codes.service";
+import { TestQuestionSorter } from "../tests/utils";
+import { EntryCodesService } from "../tests/entry-codes.service";
 
 @Injectable()
 export class TestSessionService {

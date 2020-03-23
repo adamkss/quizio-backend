@@ -1,6 +1,6 @@
 import { Controller, Post, Param, Body, Get, Res } from '@nestjs/common';
 import { TestSessionService } from './TestSession.service';
-import { EntryCodesService } from 'src/tests/entry-codes.service';
+import { EntryCodesService } from '../tests/entry-codes.service';
 import { Response } from 'express';
 
 @Controller('test-sessions')
