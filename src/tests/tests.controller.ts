@@ -111,6 +111,13 @@ export class TestsController {
             await this.testsService.getTestById(testId)
         )
     }
+    
+    @Get('/:testId/entryCodes/finished')
+    async getAllFinishedEntryCodesOfATest(@Param('testId') testId) {
+        return await this.entryCodesService.getAllFinishedEntryCodesOfATest(
+            await this.testsService.getTestById(testId)
+        )
+    }
 
     @Put('/:testId/settings')
     async updateSettings(@Param('testId') testId, @Body() settings: TestSettings) {

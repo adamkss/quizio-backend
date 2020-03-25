@@ -31,5 +31,5 @@ export class EntryCode {
     test: Test;
 
     @OneToOne(type => TestSession, testSession => testSession.entryCode)
-    entryCode: EntryCode;
+    testSession: TestSession;
 }

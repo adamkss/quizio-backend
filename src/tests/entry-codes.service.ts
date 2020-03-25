@@ -50,8 +50,20 @@ export class EntryCodesService {
         return (await test.entryCodes).filter(entryCode => entryCode.status != EntryCodeStatus.DONE);
     }
 
+    async getAllFinishedEntryCodesOfATest(test: Test): Promise<any[]> {
+        const entryCodes: EntryCode[] = await this.entryCodesRepository
+            .find({
+                where: {
+                    test: test,
+                    status: EntryCodeStatus.DONE
+                },
+                relations: ['testSession']
+            })
+        return entryCodes;
+    }
+
     async updateStateOfEntryCode(entryCode: EntryCode, status: EntryCodeStatus) {
-        entryCode.status = status;;
+        entryCode.status = status;
         await this.entryCodesRepository.save(entryCode);
     }
 }
