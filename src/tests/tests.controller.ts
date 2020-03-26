@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Body, UseGuards, Req, Get, Param, HttpCode, Delete } from "@nestjs/common";
+import { Controller, Post, Put, Body, UseGuards, Req, Get, Param, HttpCode, Delete, ForbiddenException } from "@nestjs/common";
 import { TestsService, TestSettings } from "./tests.service";
 import { AuthGuard } from "@nestjs/passport";
 import { UsersService } from "../users/users.service";
@@ -31,18 +31,26 @@ export class TestsController {
 
     @Get('/:testId')
     @UseGuards(AuthGuard('jwt'))
-    async getInfoAboutTest(@Param('testId') testId) {
+    async getInfoAboutTest(@Req() req, @Param('testId') testId) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         return await this.testsService.getTestById(testId);
     }
 
     @Get('/:testId/questions')
     @UseGuards(AuthGuard('jwt'))
-    async getTestQuestionsOfTest(@Param('testId') testId) {
+    async getTestQuestionsOfTest(@Req() req, @Param('testId') testId) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         return await this.testsService.getTestQuestionsOfTest(testId);
     }
 
     @Post('/:testId/questions')
-    async createQuestion(@Param('testId') testId, @Body() { questionText, initialQuestionOptions }) {
+    @UseGuards(AuthGuard('jwt'))
+    async createQuestion(
+        @Req() req,
+        @Param('testId') testId,
+        @Body() { questionText, initialQuestionOptions }
+    ) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         return await this.testsService.createTestQuestion(
             testId,
             questionText,
@@ -51,13 +59,25 @@ export class TestsController {
     }
 
     @Post('/questions/:questionId/options')
+    @UseGuards(AuthGuard('jwt'))
     @HttpCode(201)
-    async addQuestionOptionToQuestion(@Param('questionId') questionId, @Body() { questionOptionText }) {
+    async addQuestionOptionToQuestion(
+        @Req() req,
+        @Param('questionId') questionId,
+        @Body() { questionOptionText }
+    ) {
+        await this.verifyIsUserOwnerOfQuestion(req.user.id, questionId);
         return await this.testsService.addQuestionOptionToQuestion(questionId, questionOptionText);
     }
 
     @Put(`/questions/:questionId/correctOption`)
-    async updateCorrectAnswer(@Param('questionId') questionId, @Body() { questionOptionId }) {
+    @UseGuards(AuthGuard('jwt'))
+    async updateCorrectAnswer(
+        @Req() req,
+        @Param('questionId') questionId,
+        @Body() { questionOptionId }
+    ) {
+        await this.verifyIsUserOwnerOfQuestion(req.user.id, questionId);
         await this.testsService.updateCorrectAnswerOnQuestion(
             questionId,
             questionOptionId
@@ -65,29 +85,56 @@ export class TestsController {
     }
 
     @Get('/questions/:questionId')
-    async getQuestion(@Param('questionId') questionId) {
+    @UseGuards(AuthGuard('jwt'))
+    async getQuestion(
+        @Req() req,
+        @Param('questionId') questionId
+    ) {
+        await this.verifyIsUserOwnerOfQuestion(req.user.id, questionId);
         return await this.testsService.getQuestionInformationForAdmin(questionId);
     }
 
     @Delete('/question-options/:questionOptionId')
+    @UseGuards(AuthGuard('jwt'))
     @HttpCode(204)
-    async deleteQuestionOption(@Param('questionOptionId') questionOptionId) {
+    async deleteQuestionOption(
+        @Req() req,
+        @Param('questionOptionId') questionOptionId
+    ) {
+        await this.verifyIsUserOwnerOfQuestionOption(req.user.id, questionOptionId);
         return await this.testsService.deleteQuestionOption(questionOptionId);
     }
 
     @Delete('/questions/:questionId')
+    @UseGuards(AuthGuard('jwt'))
     @HttpCode(204)
-    async deleteQuestion(@Param('questionId') questionId) {
+    async deleteQuestion(
+        @Req() req,
+        @Param('questionId') questionId
+    ) {
+        await this.verifyIsUserOwnerOfQuestion(req.user.id, questionId);
         return await this.testsService.deleteQuestion(questionId);
     }
 
     @Put('/:testId/questionOrders')
-    async moveQuestions(@Param('testId') testId, @Body() { sourceIndex, targetIndex }) {
+    @UseGuards(AuthGuard('jwt'))
+    async moveQuestions(
+        @Req() req,
+        @Param('testId') testId,
+        @Body() { sourceIndex, targetIndex }
+    ) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         await this.testsService.changeQuestionOrders(testId, sourceIndex + 1, targetIndex + 1);
     }
 
     @Post('/:testId/entryCodes')
-    async createNewEntryCode(@Param('testId') testId, @Body() { numberOfNewEntryCodes }) {
+    @UseGuards(AuthGuard('jwt'))
+    async createNewEntryCode(
+        @Req() req,
+        @Param('testId') testId,
+        @Body() { numberOfNewEntryCodes }
+    ) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         return (await this.entryCodesService.generateNewCode(
             await this.testsService.getTestById(testId),
             numberOfNewEntryCodes
@@ -101,26 +148,73 @@ export class TestsController {
     }
 
     @Put('/:testId/entryCodes/:entryCodeId/name')
-    async updateNameOfEntryCode(@Param('testId') testId, @Param('entryCodeId') entryCodeId, @Body() { newName }) {
+    @UseGuards(AuthGuard('jwt'))
+    async updateNameOfEntryCode(
+        @Req() req,
+        @Param('testId') testId,
+        @Param('entryCodeId') entryCodeId, @Body() { newName }
+    ) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         await this.entryCodesService.updateNameOfEntryCode(entryCodeId, newName);
     }
 
     @Get('/:testId/entryCodes/unfinished')
-    async getAllUnfinishedEntryCodesOfATest(@Param('testId') testId) {
+    @UseGuards(AuthGuard('jwt'))
+    async getAllUnfinishedEntryCodesOfATest(
+        @Req() req,
+        @Param('testId') testId
+    ) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         return await this.entryCodesService.getAllUnfinishedEntryCodesOfATest(
             await this.testsService.getTestById(testId)
         )
     }
-    
+
     @Get('/:testId/entryCodes/finished')
-    async getAllFinishedEntryCodesOfATest(@Param('testId') testId) {
+    @UseGuards(AuthGuard('jwt'))
+    async getAllFinishedEntryCodesOfATest(
+        @Req() req,
+        @Param('testId') testId
+    ) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         return await this.entryCodesService.getAllFinishedEntryCodesOfATest(
             await this.testsService.getTestById(testId)
         )
     }
 
     @Put('/:testId/settings')
-    async updateSettings(@Param('testId') testId, @Body() settings: TestSettings) {
+    @UseGuards(AuthGuard('jwt'))
+    async updateSettings(
+        @Req() req,
+        @Param('testId') testId,
+        @Body() settings: TestSettings
+    ) {
+        await this.verifyIsUserOwner(req.user.id, testId);
         await this.testsService.changeSettings(testId, settings);
+    }
+
+    async isUserOwner(userId, testId): Promise<boolean> {
+        const user: User = await this.testsService.getTestsOwner(testId);
+        return user.id == userId;
+    }
+
+    async verifyIsUserOwner(userId, testId): Promise<void> {
+        const isUserOwner = await this.isUserOwner(userId, testId);
+        if (!isUserOwner)
+            throw new ForbiddenException();
+    }
+
+    async verifyIsUserOwnerOfQuestion(userId, questionId): Promise<void> {
+        const isUserOwner: boolean = (await this.testsService.getQuestionOwner(questionId)).id == userId;
+        if (!isUserOwner) {
+            throw new ForbiddenException();
+        }
+    }
+
+    async verifyIsUserOwnerOfQuestionOption(userId, questionOptionId): Promise<void> {
+        const isUserOwner: boolean = (await this.testsService.getQuestionOptionOwner(questionOptionId)).id == userId;
+        if (!isUserOwner) {
+            throw new ForbiddenException();
+        }
     }
 }

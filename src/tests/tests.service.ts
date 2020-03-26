@@ -150,6 +150,25 @@ export class TestsService {
         test.showResultAtTheEnd = testSettings.showResultAtTheEnd;
         this.testsRepository.save(test);
     }
+
+    async getTestsOwner(testId): Promise<User> {
+        const test: Test = await this.testsRepository.findOne(testId, {
+            relations: ['owner']
+        });
+        return test.owner;
+    }
+
+    async getQuestionOwner(questionId): Promise<User> {
+        const question: TestQuestion = await this.testQuestionsRepository.findOne(questionId,
+            { relations: ['test', 'test.owner'] });
+        return question.test.owner;
+    }
+
+    async getQuestionOptionOwner(questionOptionId): Promise<User> {
+        const questionOption: TestQuestionOption = await this.testQuestionOptionsRepository.findOne(questionOptionId,
+            { relations: ['testQuestion', 'testQuestion.test', 'testQuestion.test.owner'] });
+        return questionOption.testQuestion.test.owner;
+    }
 }
 
 export interface TestSettings {
