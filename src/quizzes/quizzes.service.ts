@@ -13,8 +13,9 @@ export class QuizzesService {
     constructor(
         @InjectRepository(Quiz) private readonly quizRepository: Repository<Quiz>,
         private readonly questionService: QuestionsService,
-        private readonly userService: UsersService
-    ) { }
+        private readonly userService: UsersService,
+    ) {
+     }
 
     async createQuiz(quizName: string, owner?: User, course?: Course): Promise<any> {
         const quiz = new Quiz();

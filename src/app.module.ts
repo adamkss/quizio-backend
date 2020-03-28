@@ -12,10 +12,27 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TestsModule } from './tests/tests.module';
 import { TestSessionModule } from './test-session/TestSession.module';
-
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LoggingModule } from './logging/logging.module';
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: configService.get<any>('DB_TYPE'),
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
+    }),
     QuizSessionModule,
     CoursesModule,
     QuizzesModule,
@@ -24,7 +41,8 @@ import { TestSessionModule } from './test-session/TestSession.module';
     AuthModule,
     UsersModule,
     TestsModule,
-    TestSessionModule
+    TestSessionModule,
+    LoggingModule
   ],
   controllers: [AppController],
   providers: [AppService],
