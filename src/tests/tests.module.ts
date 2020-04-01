@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Test } from './test.entity';
 import { TestsService } from './tests.service';
@@ -8,11 +8,13 @@ import { TestQuestion } from './test-question.entity';
 import { TestQuestionOption } from './test-question-option.entity';
 import { EntryCode } from './entry-code.entity';
 import { EntryCodesService } from './entry-codes.service';
+import { ElasticSearchModule } from '../elasticsearch/elastic-search.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Test, TestQuestion, TestQuestionOption, EntryCode]),
-        UsersModule
+        UsersModule,
+        forwardRef(() => ElasticSearchModule),
     ],
     providers: [TestsService, EntryCodesService],
     controllers: [TestsController],

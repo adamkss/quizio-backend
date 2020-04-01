@@ -1,30 +1,36 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EntryCode, EntryCodeStatus } from "./entry-code.entity";
 import { Repository } from "typeorm";
 import { Test } from "./test.entity";
+import { ElasticSearchService } from "../elasticsearch/elastic-search.service";
 
 @Injectable()
 export class EntryCodesService {
     constructor(
         @InjectRepository(EntryCode) private readonly entryCodesRepository: Repository<EntryCode>,
+        @Inject(forwardRef(() => ElasticSearchService))
+        private readonly elasticSearchService: ElasticSearchService
     ) { }
 
     async generateNewCode(test: Test, numberOfNewEntryCodes) {
         return Promise.all([...Array(numberOfNewEntryCodes).keys()].map(() => {
             return new Promise(async (res, rej) => {
-                const code: EntryCode = new EntryCode();
+                let code: EntryCode = new EntryCode();
                 code.test = test;
                 await this.entryCodesRepository.save(code);
                 code.code = `${test.id}-${code.id}`;
-                await this.entryCodesRepository.save(code);
+                code = await this.entryCodesRepository.save(code);
+                this.elasticSearchService.copyEntryCodeToElasticsearch(code);
                 res(code);
             })
         }));
     }
 
     async getEntryCodeById(entryCodeId): Promise<EntryCode> {
-        return this.entryCodesRepository.findOne(entryCodeId);
+        return this.entryCodesRepository.findOne(entryCodeId, {
+            relations: ['test']
+        });
     }
 
     async getEntryCodeByCode(code: String): Promise<EntryCode> {
@@ -41,9 +47,10 @@ export class EntryCodesService {
     }
 
     async updateNameOfEntryCode(entryCodeId, newName) {
-        const entryCode: EntryCode = await this.getEntryCodeById(entryCodeId);
+        let entryCode: EntryCode = await this.getEntryCodeById(entryCodeId);
         entryCode.name = newName;
-        await this.entryCodesRepository.save(entryCode);
+        entryCode = await this.entryCodesRepository.save(entryCode);
+        this.elasticSearchService.copyEntryCodeToElasticsearch(entryCode);
     }
 
     async getAllUnfinishedEntryCodesOfATest(test: Test): Promise<EntryCode[]> {
@@ -64,6 +71,13 @@ export class EntryCodesService {
 
     async updateStateOfEntryCode(entryCode: EntryCode, status: EntryCodeStatus) {
         entryCode.status = status;
+        this.elasticSearchService.copyEntryCodeToElasticsearch(entryCode);
         await this.entryCodesRepository.save(entryCode);
+    }
+
+    async getAllEntryCodesWithOwningTest(): Promise<EntryCode[]> {
+        return await this.entryCodesRepository.find({
+            relations: ['test']
+        });
     }
 }

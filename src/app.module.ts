@@ -14,11 +14,13 @@ import { TestsModule } from './tests/tests.module';
 import { TestSessionModule } from './test-session/TestSession.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggingModule } from './logging/logging.module';
+import { ElasticSearchModule } from './elasticsearch/elastic-search.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
+    ElasticSearchModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({

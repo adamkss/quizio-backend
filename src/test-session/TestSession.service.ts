@@ -85,7 +85,7 @@ export class TestSessionService {
 
     async submitTest(sessionId, testSubmitQuestionsState: TestSubmitQuestionState[]) {
         const testSession: TestSession = await this.testSessionRepository.findOne(sessionId, {
-            relations: ['entryCode', 'test']
+            relations: ['entryCode', 'entryCode.test', 'test']
         });
         this.entryCodesService.updateStateOfEntryCode(
             testSession.entryCode,
@@ -113,7 +113,7 @@ export class TestSessionService {
             }
         } else {
             return {
-                
+
             }
         }
     }
