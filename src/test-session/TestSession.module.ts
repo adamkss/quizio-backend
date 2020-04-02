@@ -5,9 +5,14 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { TestSession } from "./TestSession.entity";
 import { TestsModule } from "../tests/tests.module";
 import { TestSessionQuestionState } from "./TestSessionQuestionState.entity";
+import { ElasticSearchModule } from "../elasticsearch/elastic-search.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([TestSession, TestSessionQuestionState]), TestsModule],
+    imports: [
+        TypeOrmModule.forFeature([TestSession, TestSessionQuestionState]),
+        TestsModule,
+        ElasticSearchModule
+    ],
     providers: [TestSessionService],
     controllers: [TestSessionController],
     exports: [TestSessionService]

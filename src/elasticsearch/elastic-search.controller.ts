@@ -14,11 +14,19 @@ export class ElasticSearchController {
     }
 
     @Get('/unfinished-entry-codes')
-    async searchForEntryCodes(
+    async searchForUnfinishedEntryCodes(
         @Query('testId') testId,
         @Query('searchTerm') searchTerm: string
     ) {
-        return await this.elasticSearchService.searchForEntryCode(searchTerm, testId, EntryCodeStatus.DONE.toString());
+        return await this.elasticSearchService.searchForUnfinishedEntryCode(searchTerm, testId, EntryCodeStatus.DONE.toString());
+    }
+    
+    @Get('/finished-entry-codes')
+    async searchForFinishedEntryCodes(
+        @Query('testId') testId,
+        @Query('searchTerm') searchTerm: string
+    ) {
+        return await this.elasticSearchService.searchForFinishedEntryCode(searchTerm, testId);
     }
 
     @Delete('/indexes/:indexName')

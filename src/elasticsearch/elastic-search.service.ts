@@ -1,7 +1,7 @@
 import { Injectable, Inject, forwardRef } from "@nestjs/common";
 import elasticsearch, { Client as ElasticSearchClient } from '@elastic/elasticsearch';
 import { EntryCodesService } from "../tests/entry-codes.service";
-import { EntryCode } from "../tests/entry-code.entity";
+import { EntryCode, EntryCodeStatus } from "../tests/entry-code.entity";
 
 @Injectable()
 export class ElasticSearchService {
@@ -50,7 +50,22 @@ export class ElasticSearchService {
     })
   }
 
-  async searchForEntryCode(searchTerm: string, testId = null, mustNotStatus = null) {
+  async addResultToEntryCode(entryCode, result) {
+    await this.elasticSearchClient.index({
+      index: 'quizio-entry-codes',
+      id: entryCode.id,
+      body: {
+        id: entryCode.id,
+        code: entryCode.code,
+        name: entryCode.name,
+        status: entryCode.status.toString(),
+        testId: entryCode.test.id,
+        result
+      }
+    })
+  }
+
+  async searchForUnfinishedEntryCode(searchTerm: string, testId = null, mustNotStatus = null) {
     const { body } = await this.elasticSearchClient.search({
       index: 'quizio-entry-codes',
       body: {
@@ -81,6 +96,43 @@ export class ElasticSearchService {
                 }
               }
             ]
+          }
+        }
+      }
+    })
+    const results: any[] = body.hits.hits;
+    return results.map(result => result['_source']);
+  }
+
+  async searchForFinishedEntryCode(searchTerm: string, testId = null) {
+    const { body } = await this.elasticSearchClient.search({
+      index: 'quizio-entry-codes',
+      body: {
+        query: {
+          bool: {
+            must: [
+              {
+                term: { testId }
+              },
+              {
+                match: {
+                  status: EntryCodeStatus.DONE.toString()
+                }
+              }
+            ],
+            should: [
+              {
+                regexp: {
+                  code: `.*${searchTerm}.*`
+                }
+              },
+              {
+                multi_match: {
+                  query: searchTerm,
+                  fields: ['name', 'code']
+                }
+              }
+            ],
           }
         }
       }

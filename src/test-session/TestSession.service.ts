@@ -11,6 +11,7 @@ import { TestQuestion } from "../tests/test-question.entity";
 import { TestSessionQuestionState } from "./TestSessionQuestionState.entity";
 import { TestQuestionSorter } from "../tests/utils";
 import { EntryCodesService } from "../tests/entry-codes.service";
+import { ElasticSearchService } from "../elasticsearch/elastic-search.service";
 
 @Injectable()
 export class TestSessionService {
@@ -18,6 +19,7 @@ export class TestSessionService {
     constructor(
         private readonly testsService: TestsService,
         private readonly entryCodesService: EntryCodesService,
+        private readonly elasticSearchService: ElasticSearchService,
         @InjectRepository(TestSession) private readonly testSessionRepository: Repository<TestSession>,
         @InjectRepository(TestSessionQuestionState) private readonly testSessionQuestionStateRepository: Repository<TestSessionQuestionState>
     ) { }
@@ -106,6 +108,7 @@ export class TestSessionService {
         }
         testSession.result = (numberOfCorrectAnswers / testSubmitQuestionsState.length) * 100;
         this.testSessionRepository.save(testSession);
+        this.elasticSearchService.addResultToEntryCode(testSession.entryCode, Math.round(testSession.result));
 
         if (testSession.test.showResultAtTheEnd) {
             return {
@@ -113,7 +116,6 @@ export class TestSessionService {
             }
         } else {
             return {
-
             }
         }
     }

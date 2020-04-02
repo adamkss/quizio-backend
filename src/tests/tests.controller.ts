@@ -177,9 +177,15 @@ export class TestsController {
         @Param('testId') testId
     ) {
         await this.verifyIsUserOwner(req.user.id, testId);
-        return await this.entryCodesService.getAllFinishedEntryCodesOfATest(
+        return (await this.entryCodesService.getAllFinishedEntryCodesOfATest(
             await this.testsService.getTestById(testId)
-        )
+        )).map(entryCode => {
+            const { testSession, ...withoutTestSession } = entryCode;
+            return {
+                ...withoutTestSession,
+                result: testSession.result
+            }
+        })
     }
 
     @Put('/:testId/settings')
