@@ -2,6 +2,8 @@ import { Injectable, Inject, forwardRef } from "@nestjs/common";
 import elasticsearch, { Client as ElasticSearchClient } from '@elastic/elasticsearch';
 import { EntryCodesService } from "../tests/entry-codes.service";
 import { EntryCode, EntryCodeStatus } from "../tests/entry-code.entity";
+import { ConfigService } from "@nestjs/config";
+import { LoggingService } from "../logging/logging.service";
 
 @Injectable()
 export class ElasticSearchService {
@@ -10,11 +12,18 @@ export class ElasticSearchService {
 
   constructor(
     @Inject(forwardRef(() => EntryCodesService))
-    private readonly entryCodesService: EntryCodesService
+    private readonly entryCodesService: EntryCodesService,
+    private configService: ConfigService,
+    private readonly loggingService: LoggingService
   ) {
     const client = new elasticsearch.Client({
-      node: 'https://search-quizio-tujwztn6qj2crkxfzjvel54nza.us-east-2.es.amazonaws.com'
+      node: configService.get('ELASTICSEARCH_URL')
     });
+    client.ping().then((resp) => {
+      if (resp.statusCode == 200) {
+        loggingService.info('Connecting to Elasticsearch was successful.');
+      }
+    })
     this.elasticSearchClient = client;
   }
 
