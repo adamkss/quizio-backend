@@ -9,8 +9,8 @@ import { TestQuestionOption } from './test-question-option.entity';
 import { EntryCode } from './entry-code.entity';
 import { EntryCodesService } from './entry-codes.service';
 import { ElasticSearchModule } from '../elasticsearch/elastic-search.module';
-import { SQSModule } from 'src/sqs/sqs.module';
-import { SNSModule } from 'src/sns/sns.module';
+import { SQSModule } from '../sqs/sqs.module';
+import { SNSModule } from '../sns/sns.module';
 
 @Module({
     imports: [

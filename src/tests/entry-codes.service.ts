@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { Test } from "./test.entity";
 import { ElasticSearchService } from "../elasticsearch/elastic-search.service";
 import { SQSService } from "../sqs/sqs.service";
-import { SNSService } from "src/sns/sns.service";
+import { SNSService } from "../sns/sns.service";
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
