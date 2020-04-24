@@ -27,6 +27,7 @@
     "@nestjs/passport": "^6.2.0",
     "@nestjs/platform-express": "^6.11.11",
     "@nestjs/typeorm": "^6.3.4",
+    "aws-sdk": "^2.658.0",
     "bcryptjs": "^2.4.3",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",
@@ -36,6 +37,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
     "typeorm": "^0.2.24",
+    "uuid": "^7.0.3",
     "winston": "^3.2.1",
     "winston-cloudwatch": "^2.3.1"
   },

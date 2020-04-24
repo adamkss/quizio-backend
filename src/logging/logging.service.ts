@@ -19,8 +19,6 @@ export class LoggingService {
         const cloudwatchConfig = {
             logGroupName: configService.get('LOGGING_LOGGROUPNAME'),
             logStreamName: configService.get('LOGGING_LOGSTREAMNAME'),
-            awsAccessKeyId: configService.get('LOGGING_AWSACCESSKEYID'),
-            awsSecretKey: configService.get('LOGGING_AWSSECRETKEY'),
             awsRegion: configService.get('LOGGING_AWSREGION'),
             messageFormatter: (logObject) => `[${logObject.level}]: ${logObject.message}.\n Additional Info: ${JSON.stringify(logObject.additionalInfo)}}`
         }

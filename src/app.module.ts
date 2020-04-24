@@ -15,6 +15,9 @@ import { TestSessionModule } from './test-session/TestSession.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggingModule } from './logging/logging.module';
 import { ElasticSearchModule } from './elasticsearch/elastic-search.module';
+import { SQSModule } from './sqs/sqs.module';
+import { SNSModule } from './sns/sns.module';
+import { ParseSnsNotificationMiddleware } from './sns/parse-sns-notification.middleware';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -44,7 +47,9 @@ import { ElasticSearchModule } from './elasticsearch/elastic-search.module';
     UsersModule,
     TestsModule,
     TestSessionModule,
-    LoggingModule
+    LoggingModule,
+    SQSModule,
+    SNSModule
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -54,5 +59,7 @@ export class AppModule implements NestModule {
     consumer
       .apply(CorsMiddleware)
       .forRoutes('*');
+    consumer
+      .apply(ParseSnsNotificationMiddleware).forRoutes('/sns/quizioPDFExportDone');
   }
 }

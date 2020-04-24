@@ -4,13 +4,18 @@ import { EntryCode, EntryCodeStatus } from "./entry-code.entity";
 import { Repository } from "typeorm";
 import { Test } from "./test.entity";
 import { ElasticSearchService } from "../elasticsearch/elastic-search.service";
+import { SQSService } from "../sqs/sqs.service";
+import { SNSService } from "src/sns/sns.service";
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class EntryCodesService {
     constructor(
         @InjectRepository(EntryCode) private readonly entryCodesRepository: Repository<EntryCode>,
         @Inject(forwardRef(() => ElasticSearchService))
-        private readonly elasticSearchService: ElasticSearchService
+        private readonly elasticSearchService: ElasticSearchService,
+        private readonly sqsService: SQSService,
+        private readonly snsService: SNSService
     ) { }
 
     async generateNewCode(test: Test, numberOfNewEntryCodes) {
@@ -79,5 +84,20 @@ export class EntryCodesService {
         return await this.entryCodesRepository.find({
             relations: ['test']
         });
+    }
+
+    async exportEntryCodesToPDF(data): Promise<any> {
+        try {
+            const uniqueId = uuid();
+            await this.sqsService.sendMessageToPDFsToExportQueue({ id: uniqueId, data });
+            return new Promise((res, rej) => {
+                this.snsService.subscribeToPDFExportTopic(({ id, url }) => {
+                    if (id == uniqueId)
+                        res({url});
+                })
+            })
+        } catch {
+            return Promise.reject(false);
+        }
     }
 }

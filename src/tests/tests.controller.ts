@@ -1,10 +1,11 @@
-import { Controller, Post, Put, Body, UseGuards, Req, Get, Param, HttpCode, Delete, ForbiddenException } from "@nestjs/common";
+import { Controller, Post, Put, Body, UseGuards, Req, Get, Param, HttpCode, Delete, ForbiddenException, Res } from "@nestjs/common";
 import { TestsService, TestSettings } from "./tests.service";
 import { AuthGuard } from "@nestjs/passport";
 import { UsersService } from "../users/users.service";
 import { User } from '../users/user.entity';
 import { EntryCodesService } from "./entry-codes.service";
 import { EntryCode } from "./entry-code.entity";
+import { Response } from "express";
 
 @Controller('tests')
 export class TestsController {
@@ -197,6 +198,27 @@ export class TestsController {
     ) {
         await this.verifyIsUserOwner(req.user.id, testId);
         await this.testsService.changeSettings(testId, settings);
+    }
+
+    @Post('/:testId/entryCodes/finished/exportedPDFs')
+    @UseGuards(AuthGuard('jwt'))
+    async exportFinishedEntryCodesToPDFs(@Param('testId') testId, @Res() response: Response) {
+        const finishedEntryCodes = (await this.entryCodesService.getAllFinishedEntryCodesOfATest(
+            await this.testsService.getTestById(testId)
+        )).map(entryCode => {
+            return {
+                code: entryCode.code,
+                name: entryCode.name,
+                result: entryCode.testSession.result
+            }
+        });
+
+        const url = await this.entryCodesService.exportEntryCodesToPDF(finishedEntryCodes);
+        if (url) {
+            response.status(200).send(url).end();
+        } else {
+            response.status(503).end();
+        }
     }
 
     async isUserOwner(userId, testId): Promise<boolean> {
