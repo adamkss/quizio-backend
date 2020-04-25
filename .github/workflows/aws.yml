@@ -53,12 +53,12 @@ jobs:
     - name: Add secret to dotenv file
       uses: TickX/var-to-dotenv@v1.1.1
       with:
-        key: 'AWS_ACCESS_KEY_ID'
+        key: 'AWS_ACCESS_KEY_ID_INTERNAL'
         value: ${{secrets.AWS_ACCESS_KEY_ID_INTERNAL}}
     - name: Add secret to dotenv file
       uses: TickX/var-to-dotenv@v1.1.1
       with:
-        key: 'AWS_SECRET_ACCESS_KEY'
+        key: 'AWS_SECRET_ACCESS_KEY_INTERNAL'
         value: ${{secrets.AWS_SECRET_ACCESS_KEY_INTERNAL}}
     - name: Add secret to dotenv file
       uses: TickX/var-to-dotenv@v1.1.1
