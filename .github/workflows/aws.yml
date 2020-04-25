@@ -42,8 +42,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_GA }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_GA }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
 
     - name: Login to Amazon ECR
@@ -54,12 +54,12 @@ jobs:
       uses: TickX/var-to-dotenv@v1.1.1
       with:
         key: 'AWS_ACCESS_KEY_ID'
-        value: ${{secrets.AWS_ACCESS_KEY_ID}}
+        value: ${{secrets.AWS_ACCESS_KEY_ID_INTERNAL}}
     - name: Add secret to dotenv file
       uses: TickX/var-to-dotenv@v1.1.1
       with:
         key: 'AWS_SECRET_ACCESS_KEY'
-        value: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        value: ${{secrets.AWS_SECRET_ACCESS_KEY_INTERNAL}}
     - name: Add secret to dotenv file
       uses: TickX/var-to-dotenv@v1.1.1
       with:
