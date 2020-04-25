@@ -13,14 +13,6 @@
                     "protocol": "tcp"
                 }
             ],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "awslogs-quizio-backend",
-                    "awslogs-region": "us-east-2",
-                    "awslogs-stream-prefix": "awslogs-quizio-backend"
-                }
-            },
             "essential": true
         }
     ],
