@@ -8,6 +8,7 @@ async function bootstrap() {
   });
   app.setGlobalPrefix('api');
 
+  //configure aws sdk credentials
   aws.config.update({
     accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
     secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'],
