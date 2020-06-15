@@ -147,8 +147,11 @@ export class TestsService {
 
     async changeSettings(testId, testSettings: TestSettings) {
         const test: Test = await this.getTestById(testId);
+        if (testSettings.newTestName && test.name != testSettings.newTestName) {
+            test.name = testSettings.newTestName;
+        }
         test.showResultAtTheEnd = testSettings.showResultAtTheEnd;
-        this.testsRepository.save(test);
+        await this.testsRepository.save(test);
     }
 
     async getTestsOwner(testId): Promise<User> {
@@ -173,4 +176,5 @@ export class TestsService {
 
 export interface TestSettings {
     showResultAtTheEnd: boolean;
+    newTestName: string;
 }
